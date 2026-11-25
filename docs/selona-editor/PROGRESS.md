@@ -12,3 +12,4 @@ One line per finished or blocked task: `<IST time> <task-id> <done|BLOCKED>: <on
 2026-11-25 22:30 IST T08 done: every home section reads from content (committed with T09: Faq is shared, so the build needed both).
 2026-11-25 22:30 IST T09 done: pricing, contact (+form labels/messages), security, privacy, apply-now, titles/meta read from content; dead components removed; parity 21/21 green.
 2026-11-25 22:31 IST T10 done: all 13 images + 2 hero videos come from content keys ending in Src; next/image allows Blob URLs; screenshots 14/14 match.
+2026-11-25 22:31 IST T11 done: parity spec (from T07) takes BASE_URL; 21/21 green on local production build.

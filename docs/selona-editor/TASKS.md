@@ -17,7 +17,7 @@ In order. Each points to its part of `BRIEF.md` ("§" = section heading) and say
 - [x] T08 Home page sections read from content. Done when every home component renders from content and home text parity is zero differences.
 - [x] T09 Other pages read from content (/pricing, /contact incl. form labels and messages, /security, /privacy, /apply-now, page titles and meta). Done when parity is zero differences on every route.
 - [x] T10 Images and the showcase video come from content. Done when every image/video URL comes from content with repo files as defaults, and screenshots match the baseline.
-- [ ] T11 Parity test (text diff + screenshot compare, both widths) as a Playwright test that takes a base URL. Done when it is green against a local production build.
+- [x] T11 Parity test (text diff + screenshot compare, both widths) as a Playwright test that takes a base URL. Done when it is green against a local production build.
 - [ ] T12 Content store. §Content out of the code (Blob, environments, fallback). Create a Vercel Blob store, connect it to the project for Preview only, prefix content per environment, read on the server, fall back to defaults when empty or unreachable, refresh pages on publish. Done when the site renders with an empty store, with an unreachable store (test), and with a stored version.
 - [ ] T13 First preview deploy. §Rules (preview). Done when the branch preview builds READY and the parity test is green against it (or against a local production build, noted, if the preview can't be reached).
 

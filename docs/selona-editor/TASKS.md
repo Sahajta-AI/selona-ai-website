@@ -7,7 +7,7 @@ In order. Each points to its part of `BRIEF.md` ("§" = section heading) and say
 - [x] T01 Branch and baseline commit. §Rules, §Working files. Done when `feature/editor-and-connector` exists from `main` at 506e2ae with BRIEF, LOOP, TASKS, ASSUMPTIONS, PROGRESS, and is pushed.
 - [x] T02 Baseline capture. §Content out of the code (baseline bullet). Done when `docs/selona-editor/baseline/` has, for every route (home, /pricing, /contact, /security, /privacy, /apply-now, 404), the visible text and full-page screenshots at 1440px and 390px from live selona.ai (or a local build of 506e2ae if unreachable, noted in ASSUMPTIONS), plus the script that captured them.
 - [x] T03 ASSUMPTIONS.md seeded. §Rules (decisions). Done when ASSUMPTIONS.md exists with the decisions made so far.
-- [ ] T04 Read this Next.js version's docs (`node_modules/next/dist/docs/`, per AGENTS.md) for data caching and revalidation, route handlers, proxy/middleware, metadata and server actions. Done when the relevant API choices are written as lines in ASSUMPTIONS.md.
+- [x] T04 Read this Next.js version's docs (`node_modules/next/dist/docs/`, per AGENTS.md) for data caching and revalidation, route handlers, proxy/middleware, metadata and server actions. Done when the relevant API choices are written as lines in ASSUMPTIONS.md.
 
 ## Content out of the code
 

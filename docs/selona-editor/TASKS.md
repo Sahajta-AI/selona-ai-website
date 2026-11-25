@@ -24,7 +24,7 @@ In order. Each points to its part of `BRIEF.md` ("§" = section heading) and say
 ## Sign-in
 
 - [x] T14 Sessions, allowlist and server-side guards. §Sign-in. Done when `EDITOR_ALLOWED_EMAILS` drives access, sessions are short-lived signed cookies, every /editor page and editor/API route refuses without a session on the server, /editor is noindex and unlinked, and others get a plain "You don't have access" page.
-- [ ] T15 Access-key sign-in. §Sign-in (backup). Done when keys are generated per allowed email into a gitignored local file, only hashes go into a Preview env var (Sensitive), attempts are limited, and an env switch turns it on (off in production by default).
+- [x] T15 Access-key sign-in. §Sign-in (backup). Done when keys are generated per allowed email into a gitignored local file, only hashes go into a Preview env var (Sensitive), attempts are limited, and an env switch turns it on (off in production by default).
 - [ ] T16 Google sign-in. §Sign-in (main). Done when the Google flow is built, switches on only when its env vars exist, and is covered by a test of everything that can run without the real client. (Live test is BLOCKED B1.)
 
 ## The editor

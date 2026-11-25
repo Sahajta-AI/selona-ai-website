@@ -17,7 +17,8 @@ const getPublishedContent = unstable_cache(
       return defaultContent;
     }
   },
-  ["published-content"],
+  // keyed by environment so preview and production never share a cached copy
+  ["published-content", process.env.CONTENT_ENV || process.env.VERCEL_ENV || "development"],
   // shortcut: an hourly refresh heals a cached fallback after a store outage; Publish refreshes at once
   { tags: ["content"], revalidate: 3600 },
 );

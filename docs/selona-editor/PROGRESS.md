@@ -13,3 +13,4 @@ One line per finished or blocked task: `<IST time> <task-id> <done|BLOCKED>: <on
 2026-11-25 22:30 IST T09 done: pricing, contact (+form labels/messages), security, privacy, apply-now, titles/meta read from content; dead components removed; parity 21/21 green.
 2026-11-25 22:31 IST T10 done: all 13 images + 2 hero videos come from content keys ending in Src; next/image allows Blob URLs; screenshots 14/14 match.
 2026-11-25 22:31 IST T11 done: parity spec (from T07) takes BASE_URL; 21/21 green on local production build.
+2026-11-25 22:51 IST T12 done: Blob store created; BLOB_STORE_ID set for Preview only (OIDC, no secret); fallback to defaults verified with unreachable store; stored version shown.

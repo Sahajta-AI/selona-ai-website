@@ -1,7 +1,7 @@
 "use client";
 
 import { useId, useState, type FormEvent } from "react";
-import { site } from "@/lib/content";
+import { site } from "@/lib/legacy-content";
 
 // Submissions are delivered to site.formRecipient via FormSubmit.co's AJAX
 // endpoint — no backend or API key required. The first-ever submission sends

@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import Image from "next/image";
 import { Reveal } from "@/components/Reveal";
-import { platformStages } from "@/lib/content";
+import { platformStages } from "@/lib/legacy-content";
 
 // Six-stage walkthrough of the real product. Structural pattern (interval-
 // driven active tab, pause on hover) follows Services.tsx as a reference,

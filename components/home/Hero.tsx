@@ -3,7 +3,7 @@
 import { useEffect, useRef, Fragment } from "react";
 import Link from "next/link";
 import { Reveal } from "@/components/Reveal";
-import { site } from "@/lib/content";
+import { site } from "@/lib/legacy-content";
 
 // Matches selona.ai's live hero technique: an oversized video sits absolutely
 // behind the centered text stack, desaturated (grayscale + invert + dimmed)

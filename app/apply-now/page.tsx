@@ -3,7 +3,7 @@ import { PageHeader } from "@/components/PageHeader";
 import { Reveal } from "@/components/Reveal";
 import { ContactForm } from "@/components/ContactForm";
 import { Faq } from "@/components/Faq";
-import { careers, site } from "@/lib/content";
+import { careers, site } from "@/lib/legacy-content";
 
 export const metadata: Metadata = {
   title: "Apply Now",

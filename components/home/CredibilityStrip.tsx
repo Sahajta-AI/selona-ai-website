@@ -1,4 +1,4 @@
-import { credibilityStrip } from "@/lib/content";
+import { credibilityStrip } from "@/lib/legacy-content";
 
 export function CredibilityStrip() {
   return (

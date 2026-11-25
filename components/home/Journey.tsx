@@ -1,5 +1,5 @@
 import { Reveal, WordReveal } from "@/components/Reveal";
-import { journey } from "@/lib/content";
+import { journey } from "@/lib/legacy-content";
 
 export function Journey() {
   return (

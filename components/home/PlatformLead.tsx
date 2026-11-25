@@ -1,6 +1,6 @@
 import Image from "next/image";
 import { Reveal, WordReveal } from "@/components/Reveal";
-import { platformLead } from "@/lib/content";
+import { platformLead } from "@/lib/legacy-content";
 
 export function PlatformLead() {
   return (

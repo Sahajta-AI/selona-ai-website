@@ -1,6 +1,6 @@
 import Image from "next/image";
 import { Reveal, WordReveal } from "@/components/Reveal";
-import { projects, sectors } from "@/lib/content";
+import { projects, sectors } from "@/lib/legacy-content";
 
 export function Credentials() {
   return (

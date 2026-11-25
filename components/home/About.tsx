@@ -1,5 +1,5 @@
 import { Reveal, WordReveal } from "@/components/Reveal";
-import { differentiator, features, stats } from "@/lib/content";
+import { differentiator, features, stats } from "@/lib/legacy-content";
 
 export function About() {
   return (

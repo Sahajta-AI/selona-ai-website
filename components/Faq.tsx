@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { Reveal } from "@/components/Reveal";
-import { faqs, site } from "@/lib/content";
+import { faqs, site } from "@/lib/legacy-content";
 
 export function Faq() {
   const [openIndex, setOpenIndex] = useState<number | null>(null);

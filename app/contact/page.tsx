@@ -3,7 +3,7 @@ import { PageHeader } from "@/components/PageHeader";
 import { Reveal } from "@/components/Reveal";
 import { ContactForm } from "@/components/ContactForm";
 import { Faq } from "@/components/Faq";
-import { contactIntro, site } from "@/lib/content";
+import { contactIntro, site } from "@/lib/legacy-content";
 
 export const metadata: Metadata = {
   title: "Contact",

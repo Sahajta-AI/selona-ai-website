@@ -3,9 +3,9 @@
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { Logo } from "./Logo";
-import { navLinks } from "@/lib/content";
+import type { Content } from "@/lib/content/paths";
 
-export function Nav() {
+export function Nav({ nav, brand }: { nav: Content["shared"]["nav"]; brand: Content["shared"]["brand"] }) {
   const [open, setOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
 
@@ -33,17 +33,17 @@ export function Nav() {
       >
         <Link
           href="/"
-          aria-label="Selona home"
+          aria-label={brand.homeLabel}
           onClick={() => setOpen(false)}
           className="inline-flex min-h-[44px] min-w-[44px] items-center"
         >
-          <Logo className="h-6 w-auto md:h-7" />
+          <Logo src={brand.logoSrc} alt={brand.logoAlt} className="h-6 w-auto md:h-7" />
         </Link>
 
         <nav className="hidden items-center gap-7 min-[768px]:flex">
-          {navLinks.map((l) => (
+          {nav.links.map((l, i) => (
             <Link
-              key={l.label}
+              key={i}
               href={l.href}
               className="inline-flex min-h-[44px] min-w-[44px] items-center text-sm font-medium text-ink transition-colors duration-200 hover:text-sky"
             >
@@ -55,13 +55,13 @@ export function Nav() {
           href="/contact"
           className="hidden min-h-[44px] items-center rounded-full border border-line bg-white/55 px-5 py-2.5 text-sm font-medium text-ink backdrop-blur-md transition-colors duration-200 hover:border-action/30 hover:text-action min-[768px]:inline-flex"
         >
-          Contact
+          {nav.contact}
         </Link>
 
         <div className="flex items-center gap-3 min-[768px]:hidden">
           <button
             type="button"
-            aria-label={open ? "Close menu" : "Open menu"}
+            aria-label={open ? nav.closeMenu : nav.openMenu}
             aria-expanded={open}
             aria-controls="mobile-nav-menu"
             onClick={() => setOpen((v) => !v)}
@@ -91,12 +91,8 @@ export function Nav() {
         >
           <nav>
             <ul className="flex flex-col gap-1 p-3">
-              {[
-                ...navLinks,
-                { label: "Contact", href: "/contact" },
-                { label: "Book a walkthrough", href: "/contact" },
-              ].map((l) => (
-                <li key={l.label}>
+              {[...nav.links, ...nav.mobileLinks].map((l, i) => (
+                <li key={i}>
                   <Link
                     href={l.href}
                     onClick={() => setOpen(false)}

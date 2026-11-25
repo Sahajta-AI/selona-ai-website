@@ -4,6 +4,7 @@ import localFont from "next/font/local";
 import "./globals.css";
 import { Nav } from "@/components/Nav";
 import { Footer } from "@/components/Footer";
+import { getContent } from "@/lib/content";
 
 const inter = Inter({
   variable: "--font-inter",
@@ -20,28 +21,28 @@ const satoshi = localFont({
   ],
 });
 
-export const metadata: Metadata = {
-  metadataBase: new URL("https://selona.ai"),
-  title: {
-    default: "Selona | The Control Layer for Finance AI",
-    template: "%s | Selona",
-  },
-  description:
-    "ThinkAIWork turns company context, source files, workflows, and templates into structured, auditable outputs across the AI models your team chooses.",
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const { meta } = (await getContent()).shared;
+  return {
+    metadataBase: new URL("https://selona.ai"),
+    title: { default: meta.title, template: meta.titleTemplate },
+    description: meta.description,
+  };
+}
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const c = await getContent();
   return (
     <html
       lang="en"
       className={`${inter.variable} ${satoshi.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col">
-        <Nav />
+        <Nav nav={c.shared.nav} brand={c.shared.brand} />
         <main className="flex-1">{children}</main>
         <Footer />
       </body>

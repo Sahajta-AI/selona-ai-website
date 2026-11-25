@@ -1,5 +1,5 @@
 import { Reveal, WordReveal } from "@/components/Reveal";
-import { betaProof } from "@/lib/content";
+import { betaProof } from "@/lib/legacy-content";
 
 export function PrivateBeta() {
   return (

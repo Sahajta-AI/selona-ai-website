@@ -1,6 +1,6 @@
 import { Reveal, WordReveal } from "@/components/Reveal";
 import { MiniArtifact } from "@/components/home/VisualSystem";
-import { useCases } from "@/lib/content";
+import { useCases } from "@/lib/legacy-content";
 
 const useCaseArtifacts = [
   {

@@ -1,5 +1,5 @@
 import { WordReveal } from "@/components/Reveal";
-import { site } from "@/lib/content";
+import { site } from "@/lib/legacy-content";
 
 export function Mission() {
   return (

@@ -1,7 +1,7 @@
 import Image from "next/image";
 import { Reveal, WordReveal } from "@/components/Reveal";
 import { VisualFrame } from "@/components/home/VisualSystem";
-import { financeLayers } from "@/lib/content";
+import { financeLayers } from "@/lib/legacy-content";
 
 export function FinanceLayers() {
   return (

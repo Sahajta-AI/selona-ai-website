@@ -1,6 +1,6 @@
 import { Reveal, WordReveal } from "@/components/Reveal";
 import { VisualFrame } from "@/components/home/VisualSystem";
-import { problems } from "@/lib/content";
+import { problems } from "@/lib/legacy-content";
 
 function ProblemFailureVisual() {
   return (

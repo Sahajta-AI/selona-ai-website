@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import Image from "next/image";
 import { Reveal } from "@/components/Reveal";
-import { services } from "@/lib/content";
+import { services } from "@/lib/legacy-content";
 
 const INTERVAL_MS = 5000;
 

@@ -1,6 +1,6 @@
 import { Reveal, WordReveal } from "@/components/Reveal";
 import { MiniArtifact, VisualFrame } from "@/components/home/VisualSystem";
-import { trust } from "@/lib/content";
+import { trust } from "@/lib/legacy-content";
 
 function TrustControlVisual() {
   const controls = [

@@ -8,3 +8,4 @@ One line per finished or blocked task: `<IST time> <task-id> <done|BLOCKED>: <on
 2026-11-25 22:10 IST T04 done: read caching, revalidation, draft mode and route handler docs; choices in ASSUMPTIONS.md.
 2026-11-25 22:12 IST T05 done: content/defaults.json holds 400 texts, 13 images, 2 videos; inventory in CONTENT-INVENTORY.md.
 2026-11-25 22:14 IST T06 done: lib/content (paths, store, versions, getContent) + unit tests green; build green.
+2026-11-25 22:24 IST T07 done: layout metadata, nav, footer, logo, 404 read from content; parity test (text + 1440/390 screenshots) 21/21 green locally.

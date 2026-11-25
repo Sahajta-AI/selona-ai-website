@@ -24,3 +24,4 @@ One line each. Decided without anyone to ask; revisit in the morning if any is w
 - Lists that the code paired with a parallel array by index (use cases ↔ artifact cards, workflow steps ↔ images) are merged into one list of items, so adding, removing or reordering keeps them together. Same rendered text.
 - Text built from several values in code (apply-now role cards, privacy paragraphs with the email) is stored as the full sentence, so Mr Rahul edits one sentence; rendered text is identical.
 - New dependencies: `@vercel/blob` (the content store the brief asks for) and `@playwright/test` as a dev dependency, same version as the repo's `playwright` (the test runner for the end-to-end and unit tests).
+- Screenshots (baseline and tests) hide the hero background video, which pauses on a different frame on every load; the home baseline screenshots were recaptured from 506e2ae that way. Text baseline unchanged.

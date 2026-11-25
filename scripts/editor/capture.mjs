@@ -29,7 +29,7 @@ export async function readPage(page) {
   }));
 }
 
-if (import.meta.url === `file://${process.argv[1]}`) {
+if (process.argv[1]?.endsWith("capture.mjs")) {
   mkdirSync(outDir, { recursive: true });
   // shortcut: pinned playwright differs from the preinstalled browser; PW_CHROME overrides the path
   const browser = await chromium.launch(process.env.PW_CHROME ? { executablePath: process.env.PW_CHROME } : {});
@@ -40,6 +40,8 @@ if (import.meta.url === `file://${process.argv[1]}`) {
       await page.goto(base + route, { waitUntil: 'networkidle' });
       await settle(page);
       if (tag === '1440') writeFileSync(`${outDir}/${name}.json`, JSON.stringify(await readPage(page), null, 2) + '\n');
+      // the background video pauses on a different frame each run, so it is left out of screenshots
+      await page.addStyleTag({ content: 'video{visibility:hidden!important}' });
       await page.screenshot({ path: `${outDir}/${name}-${tag}.png`, fullPage: true });
       console.log(`captured ${name} @${tag}`);
     }

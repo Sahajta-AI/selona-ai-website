@@ -1,4 +1,4 @@
-import { toolLogos } from "@/lib/content";
+import { toolLogos } from "@/lib/legacy-content";
 
 function Row({ reverse = false }: { reverse?: boolean }) {
   const items = [...toolLogos, ...toolLogos];

@@ -3,7 +3,7 @@ import Link from "next/link";
 import { PageHeader } from "@/components/PageHeader";
 import { Reveal } from "@/components/Reveal";
 import { CtaBand } from "@/components/home/CtaBand";
-import { pricingIntro, pricingTiers } from "@/lib/content";
+import { pricingIntro, pricingTiers } from "@/lib/legacy-content";
 
 export const metadata: Metadata = {
   title: "Pricing",

@@ -1,6 +1,6 @@
 import { Reveal, WordReveal } from "@/components/Reveal";
 import { PrimaryButton, SecondaryButton } from "@/components/Buttons";
-import { cta, site, traction } from "@/lib/content";
+import { cta, site, traction } from "@/lib/legacy-content";
 
 export function Traction() {
   return (

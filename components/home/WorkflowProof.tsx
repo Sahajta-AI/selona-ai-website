@@ -4,7 +4,7 @@ import {
   ProductCrop,
   VisualFrame,
 } from "@/components/home/VisualSystem";
-import { workflowProof } from "@/lib/content";
+import { workflowProof } from "@/lib/legacy-content";
 
 const workflowVisuals = [
   {

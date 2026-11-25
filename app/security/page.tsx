@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { PageHeader } from "@/components/PageHeader";
 import { Reveal } from "@/components/Reveal";
-import { site } from "@/lib/content";
+import { site } from "@/lib/legacy-content";
 
 export const metadata: Metadata = {
   title: "Security Review",

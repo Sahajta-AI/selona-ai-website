@@ -4,7 +4,7 @@ import {
   SystemChip,
   VisualFrame,
 } from "@/components/home/VisualSystem";
-import { mechanism } from "@/lib/content";
+import { mechanism } from "@/lib/legacy-content";
 
 function FlowColumn({
   eyebrow,

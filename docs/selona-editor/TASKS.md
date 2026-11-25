@@ -29,19 +29,19 @@ In order. Each points to its part of `BRIEF.md` ("§" = section heading) and say
 
 ## The editor
 
-- [ ] T17 Editor shell: /editor shows the real page for any route with click-to-edit text that changes in place. §The editor. Done when clicking any text on any page lets you type and see it change.
-- [ ] T18 Drafts and full-page preview. §The editor (preview, nothing goes live). Done when edits are saved as a server-side draft and "Preview" shows the full page with changes while the live site is unchanged.
-- [ ] T19 Undo and Redo. §The editor. Done when Ctrl+Z / Cmd+Z, Ctrl+Shift+Z / Cmd+Shift+Z and the Undo/Redo buttons work.
-- [ ] T20 Lists: add, remove, reorder items (use cases, problems, features, FAQs, outputs). Done when each list on the site supports all three in the editor.
-- [ ] T21 Image and video replacement by upload. §The editor (images). Done when only images (and the video slot only video) are accepted, there is a size limit, images are compressed, and the new file shows.
-- [ ] T22 Publish and "Live now". §The editor. Done when Publish writes a new version, refreshes pages without a redeploy, and shows "Live now" only after the public page is confirmed to show the change.
-- [ ] T23 Conflict warning. §The editor. Done when publishing over a newer version published by someone else since the editor was opened warns before overwriting.
-- [ ] T24 Plain words and phone pass. §The editor (last bullet). Done when every visible label/message is jargon-free and the editor works at 390px without breaking.
+- [x] T17 Editor shell: /editor shows the real page for any route with click-to-edit text that changes in place. §The editor. Done when clicking any text on any page lets you type and see it change.
+- [x] T18 Drafts and full-page preview. §The editor (preview, nothing goes live). Done when edits are saved as a server-side draft and "Preview" shows the full page with changes while the live site is unchanged.
+- [x] T19 Undo and Redo. §The editor. Done when Ctrl+Z / Cmd+Z, Ctrl+Shift+Z / Cmd+Shift+Z and the Undo/Redo buttons work.
+- [x] T20 Lists: add, remove, reorder items (use cases, problems, features, FAQs, outputs). Done when each list on the site supports all three in the editor.
+- [x] T21 Image and video replacement by upload. §The editor (images). Done when only images (and the video slot only video) are accepted, there is a size limit, images are compressed, and the new file shows.
+- [x] T22 Publish and "Live now". §The editor. Done when Publish writes a new version, refreshes pages without a redeploy, and shows "Live now" only after the public page is confirmed to show the change.
+- [x] T23 Conflict warning. §The editor. Done when publishing over a newer version published by someone else since the editor was opened warns before overwriting.
+- [x] T24 Plain words and phone pass. §The editor (last bullet). Done when every visible label/message is jargon-free and the editor works at 390px without breaking.
 
 ## History and archive
 
-- [ ] T25 History and restore. §History and archive. Done when every published version shows date, time and who, and restoring any version loads it as a draft to preview and publish; restore makes a new version; nothing is deleted.
-- [ ] T26 Archive. §History and archive. Done when the whole site can be saved as a named version and brought back in one step, and the archive "Original site, before the editor (25 Nov 2026)" is seeded from today's content.
+- [x] T25 History and restore. §History and archive. Done when every published version shows date, time and who, and restoring any version loads it as a draft to preview and publish; restore makes a new version; nothing is deleted.
+- [x] T26 Archive. §History and archive. Done when the whole site can be saved as a named version and brought back in one step, and the archive "Original site, before the editor (25 Nov 2026)" is seeded from today's content.
 
 ## The Claude connector (MCP)
 

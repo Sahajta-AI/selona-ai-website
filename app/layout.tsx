@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import localFont from "next/font/local";
 import "./globals.css";
-import { getContent } from "@/lib/content";
+import { getContent, getContentVersion } from "@/lib/content";
 
 const inter = Inter({
   variable: "--font-inter",
@@ -25,6 +25,8 @@ export async function generateMetadata(): Promise<Metadata> {
     metadataBase: new URL("https://selona.ai"),
     title: { default: meta.title, template: meta.titleTemplate },
     description: meta.description,
+    // which content version this page shows (the editor waits for it after Publish)
+    other: { "content-version": await getContentVersion() },
   };
 }
 

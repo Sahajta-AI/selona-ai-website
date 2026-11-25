@@ -26,7 +26,7 @@ export async function writeFile(name: string, body: string | Buffer, contentType
     const file = path.join(localDir, prefix, name);
     await fs.mkdir(path.dirname(file), { recursive: true });
     await fs.writeFile(file, body);
-    return { pathname: prefix + name, url: `/api/editor/local-file/${prefix}${name}`, uploadedAt: new Date().toISOString() };
+    return { pathname: prefix + name, url: `/api/media/local/${prefix}${name}`, uploadedAt: new Date().toISOString() };
   }
   // Random suffix: file addresses can't be guessed; listing needs the server token.
   const r = await put(prefix + name, body, { access: "public", contentType, addRandomSuffix: true });
@@ -40,7 +40,7 @@ export async function listFiles(folder: string, limit = 1000, cursor?: string) {
     const start = cursor ? Number(cursor) : 0;
     const files = names.slice(start, start + limit).map((n) => ({
       pathname: `${prefix}${folder}/${n}`,
-      url: `/api/editor/local-file/${prefix}${folder}/${n}`,
+      url: `/api/media/local/${prefix}${folder}/${n}`,
       uploadedAt: "",
     }));
     const next = start + limit;

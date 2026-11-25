@@ -54,17 +54,36 @@ export function listKeys(obj: unknown, prefix = ""): string[] {
   return [];
 }
 
-/** Stored content laid over the repo default, so keys added to the code later still show. */
-export function mergeContent(base: Json, stored: Json | undefined): Json {
+const SAFE_MEDIA = /^(\/[\w\-./]+|https:\/\/[a-z0-9]+\.public\.blob\.vercel-storage\.com\/[\w\-./%]+)$/i;
+const MAX_TEXT = 5000;
+
+/**
+ * Stored content laid over the repo default, so keys added to the code later still
+ * show, and anything of the wrong shape falls back to the default instead of
+ * breaking a page. List items are checked against the default list's first item.
+ */
+export function mergeContent(base: Json, stored: Json | undefined, key = ""): Json {
   if (stored === undefined || stored === null) return base;
-  if (Array.isArray(base)) return Array.isArray(stored) ? stored : base;
+  if (Array.isArray(base)) {
+    if (!Array.isArray(stored)) return base;
+    const template = base[0];
+    return stored
+      .slice(0, 100)
+      .map((item) => (template === undefined ? (typeof item === "string" ? item : undefined) : mergeContent(template, item, `${key}.0`)))
+      .filter((v): v is Json => v !== undefined);
+  }
   if (base && typeof base === "object") {
     if (!stored || typeof stored !== "object" || Array.isArray(stored)) return base;
     const out: Record<string, Json> = {};
-    for (const k of Object.keys(base)) out[k] = mergeContent((base as Record<string, Json>)[k], stored[k]);
+    for (const k of Object.keys(base)) out[k] = mergeContent((base as Record<string, Json>)[k], stored[k], key ? `${key}.${k}` : k);
     return out;
   }
-  return typeof stored === typeof base ? stored : base;
+  if (typeof stored !== typeof base) return base;
+  if (typeof stored === "string") {
+    if (isMediaKey(key) && !SAFE_MEDIA.test(stored)) return base;
+    return stored.slice(0, MAX_TEXT);
+  }
+  return stored;
 }
 
 export type Change = { key: string; kind: "text" | "media" | "list"; before: Json | undefined; after: Json | undefined };
@@ -92,10 +111,41 @@ function sameItemSet(a: unknown[], b: unknown[]) {
   return s(a) === s(b);
 }
 
-/** Plain-words name for a key, for people: "home.problems.items.2.name" → "Home › Problems › item 3 › Name". */
+// Plain words for the parts of a content key, so nothing technical shows in the editor.
+const WORDS: Record<string, string> = {
+  shared: "Every page", home: "Home page", pricing: "Pricing page", contact: "Contact page", security: "Security page",
+  privacy: "Privacy page", applyNow: "Apply page", notFound: "Page not found",
+  meta: "Page details", title: "Title", titleTemplate: "Title ending (after each page name)", description: "Description for search engines",
+  nav: "Top menu", footer: "Bottom of the page", cta: "Button", primary: "Main button", secondary: "Second button",
+  eyebrow: "Small heading", heading: "Heading", sub: "Text under the heading", intro: "Introduction", lead: "Introduction",
+  hero: "Top of the page", headline: "Big headline", subheadline: "Text under the headline", items: "List", links: "Links",
+  label: "Label", body: "Text", name: "Name", note: "Note", logoSrc: "Logo", logoAlt: "Logo description",
+  imageSrc: "Picture", imageAlt: "Picture description", visualSrc: "Picture", visualAlt: "Picture description",
+  videoSrc: "Background video (computer)", videoMobileSrc: "Background video (phone)", homeLabel: "Logo link name (for screen readers)",
+  openMenu: "Menu button name (closed)", closeMenu: "Menu button name (open)", calendarLink: "Calendar link", enquiriesLabel: "'For enquiries' words",
+  email: "Email address", form: "Contact form messages", sending: "While sending", submit: "Send button", invalid: "When something is missing",
+  errorBefore: "When sending fails", success: "After sending", faq: "Questions and answers", q: "Question", a: "Answer",
+  tiers: "Price plans", features: "What's included", model: "Plan type", credibility: "Facts strip", showcase: "Product picture",
+  problems: "The problem", mechanism: "Control layer", workflow: "Workflow example", steps: "Steps", step: "Step number",
+  layers: "Product layers", useCases: "Use cases", trust: "Trust and control", beta: "Private beta", stats: "Numbers", value: "Number",
+  testimonials: "Quotes", quote: "Quote", attribution: "Who said it", artifacts: "Small cards",
+  labels: "Form field names", roles: "Open roles", role: "Role", details: "Details", sections: "Sections", paragraphs: "Paragraphs",
+  list: "Bullet points", updated: "Last updated", coverItems: "What we cover", coverTitle: "Heading", bookingText: "Booking text",
+  bookingLink: "Booking link", code: "Error code", columns: "Columns", tagline: "Tagline", bottomLine: "Last line", brand: "Logo",
+  mobileLinks: "Extra menu links on phones", inputs: "Inputs", outputs: "Outputs", layer: "Control layer parts", controls: "Controls",
+  models: "Model names", modelFlex: "Model choice text", feedback: "Feedback", surfaceLabel: "Card label", surfaceTitle: "Card title",
+};
+
+/** Plain-words name for a key, for people: "home.problems.items.2.name" → "Home page › The problem › List › item 3 › Name". */
 export function describeKey(key: string) {
-  return key
-    .split(".")
-    .map((p) => (/^\d+$/.test(p) ? `item ${Number(p) + 1}` : p.replace(/([A-Z])/g, " $1").replace(/^./, (c) => c.toUpperCase())))
+  const parts = key.split(".");
+  return parts
+    .map((p, i) => {
+      if (/^\d+$/.test(p)) return `item ${Number(p) + 1}`;
+      // "meta" inside a small card is its little side text, not page details
+      if (p === "meta" && i > 0 && parts[i - 2] === "artifacts") return "Small text";
+      if (p === "meta" && i > 1 && /^\d+$/.test(parts[i - 1])) return "Small text";
+      return WORDS[p] ?? p.replace(/([A-Z])/g, " $1").replace(/^./, (c) => c.toUpperCase());
+    })
     .join(" › ");
 }

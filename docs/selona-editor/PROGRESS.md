@@ -18,3 +18,14 @@ One line per finished or blocked task: `<IST time> <task-id> <done|BLOCKED>: <on
 2026-11-25 23:12 IST T14 done: signed 8h sessions, EDITOR_ALLOWED_EMAILS, /editor + API guarded on the server, noindex headers, 'You don't have access' page; auth tests 8/8 + parity 21/21 locally. Pushes now go to Sahajta-AI/selona-ai-website.
 2026-11-25 23:12 IST T15 done: keys generated into gitignored .env.editor-keys.local; hashes Sensitive on Preview; EDITOR_ACCESS_KEYS_ENABLED=true on Preview only (off by default); 5/15min lock tested.
 2026-11-25 23:13 IST T16 done: Google OAuth (state cookie, openid email, verified + allowlisted) built; tested up to Google and refusal of forged replies; live sign-in BLOCKED B1.
+2026-11-25 23:27 IST T17 done: editor at /editor shows the real page (Draft Mode) with click-to-edit text via invisible markers; proof 3 green locally.
+2026-11-25 23:27 IST T18 done: shared draft saved on the server; Preview shows the full page; live site unchanged until Publish (proof 3).
+2026-11-25 23:27 IST T19 done: Ctrl/Cmd+Z, Ctrl+Shift+Z/Ctrl+Y, Undo and Redo buttons (proof 4).
+2026-11-25 23:27 IST T20 done: lists: move up/down, add another, remove (proof 6).
+2026-11-25 23:27 IST T21 done: picture/video replacement with browser compression and server type/size checks (proof 5).
+2026-11-25 23:27 IST T22 done: Publish refreshes pages without redeploy; "Live now ✓" only after the public page shows the new version.
+2026-11-25 23:27 IST T23 done: conflict warnings for drafts and publishing (proof 10).
+2026-11-25 23:27 IST T24 done: plain-words labels everywhere (key names translated); works at 390px (no sideways scroll; panel collapsible).
+2026-11-25 23:27 IST T25 done: History with date/time/who; Restore as draft; restores are new versions; nothing deleted (proof 7).
+(T17–T26 share one editor component and one in-page script, so they were built and committed together in one commit, "T17-T26".)
+2026-11-25 23:27 IST T26 done: Saved versions: name + save the live site, bring back in one step, original archive seeded automatically (proof 8). Full suite 42/42 + editor 7/7 green on local production build.

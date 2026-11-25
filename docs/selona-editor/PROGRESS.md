@@ -15,3 +15,4 @@ One line per finished or blocked task: `<IST time> <task-id> <done|BLOCKED>: <on
 2026-11-25 22:31 IST T11 done: parity spec (from T07) takes BASE_URL; 21/21 green on local production build.
 2026-11-25 22:51 IST T12 done: Blob store created; BLOB_STORE_ID set for Preview only (OIDC, no secret); fallback to defaults verified with unreachable store; stored version shown.
 2026-11-25 23:09 IST T13 done: preview dpl_4N9eZRMLc3eHLBnSY6yfAtNduYEJ READY (branch alias selona-git-feature-editor-and-connector-sahajta-projects.vercel.app); from a Vercel Sandbox: text parity 7/7, 1440 screenshots 7/7; 390 differs by font rendering, re-checked against a same-machine baseline. Blob on preview BLOCKED (owner must connect store).
+2026-11-25 23:12 IST T14 done: signed 8h sessions, EDITOR_ALLOWED_EMAILS, /editor + API guarded on the server, noindex headers, 'You don't have access' page; auth tests 8/8 + parity 21/21 locally. Pushes now go to Sahajta-AI/selona-ai-website.

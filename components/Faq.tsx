@@ -2,9 +2,17 @@
 
 import { useState } from "react";
 import { Reveal } from "@/components/Reveal";
-import { faqs, site } from "@/lib/legacy-content";
+import type { Content } from "@/lib/content/paths";
 
-export function Faq() {
+export function Faq({
+  faq,
+  email,
+  enquiriesLabel,
+}: {
+  faq: Content["shared"]["faq"];
+  email: string;
+  enquiriesLabel: string;
+}) {
   const [openIndex, setOpenIndex] = useState<number | null>(null);
 
   return (
@@ -12,18 +20,18 @@ export function Faq() {
       <div className="mx-auto flex max-w-3xl flex-col gap-10">
         <div className="flex flex-col gap-3 text-center">
           <Reveal as="h2" className="type-h2">
-            Frequently asked questions
+            {faq.heading}
           </Reveal>
           <Reveal as="p" className="type-lead text-body-60">
-            Find some quick answers to the most common questions.
+            {faq.sub}
           </Reveal>
         </div>
 
         <ul className="flex flex-col gap-3">
-          {faqs.map((f, i) => {
+          {faq.items.map((f, i) => {
             const open = openIndex === i;
             return (
-              <Reveal as="li" key={f.q} delay={i * 60}>
+              <Reveal as="li" key={i} delay={i * 60}>
                 <div className="rounded-lg border border-line bg-paper">
                   <button
                     type="button"
@@ -53,12 +61,12 @@ export function Faq() {
         </ul>
 
         <p className="type-body text-center text-body-60">
-          For enquiries:{" "}
+          {enquiriesLabel}{" "}
           <a
-            href={`mailto:${site.email}`}
+            href={`mailto:${email}`}
             className="inline-flex min-h-[44px] items-center align-middle text-action hover:text-sky"
           >
-            {site.email}
+            {email}
           </a>
         </p>
       </div>

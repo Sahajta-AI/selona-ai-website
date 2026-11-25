@@ -3,53 +3,12 @@ import {
   MiniArtifact,
   ProductCrop,
   VisualFrame,
+  type Tone,
 } from "@/components/home/VisualSystem";
-import { workflowProof } from "@/lib/legacy-content";
+import { getContent } from "@/lib/content";
 
-const workflowVisuals = [
-  {
-    image: "/product/input-data.webp",
-    alt: "ThinkAIWork input data workspace",
-    artifact: {
-      label: "Source",
-      title: "Ledger extract uploaded",
-      meta: "Linked",
-      tone: "blue" as const,
-    },
-  },
-  {
-    image: "/product/build-context.webp",
-    alt: "ThinkAIWork company context builder",
-    artifact: {
-      label: "Context",
-      title: "Entity and review rules applied",
-      meta: "v2.4",
-      tone: "amber" as const,
-    },
-  },
-  {
-    image: "/product/skills-plugins.webp",
-    alt: "ThinkAIWork reusable finance skill builder",
-    artifact: {
-      label: "Skill",
-      title: "VAT/GST workflow selected",
-      meta: "Approved",
-      tone: "navy" as const,
-    },
-  },
-  {
-    image: "/product/auditable-output.webp",
-    alt: "ThinkAIWork auditable output summary with exceptions and source links",
-    artifact: {
-      label: "Output",
-      title: "Exceptions and evidence ready",
-      meta: "Audit",
-      tone: "green" as const,
-    },
-  },
-];
-
-export function WorkflowProof() {
+export async function WorkflowProof() {
+  const workflowProof = (await getContent()).home.workflow;
   return (
     <section id="workflow-proof" className="gutter bg-paper py-14 md:py-20">
       <div className="mx-auto flex max-w-6xl flex-col gap-8 md:gap-10">
@@ -76,18 +35,19 @@ export function WorkflowProof() {
             />
             {workflowProof.steps.map((item, index) => (
               <Reveal
-                key={item.label}
+                key={index}
                 delay={index * 70}
                 className="relative flex min-h-full flex-col gap-4 rounded-[20px] border border-line bg-white/82 p-3.5 shadow-[0_12px_34px_rgba(13,22,48,0.04)] md:p-4"
               >
                 <div className="relative">
                   <ProductCrop
-                    src={workflowVisuals[index].image}
-                    alt={workflowVisuals[index].alt}
+                    src={item.imageSrc}
+                    alt={item.imageAlt}
                     className="aspect-[5/3]"
                   />
                   <MiniArtifact
-                    {...workflowVisuals[index].artifact}
+                    {...item.artifact}
+                    tone={item.artifact.tone as Tone}
                     className="absolute bottom-2 left-2 right-2 hidden sm:block"
                   />
                 </div>

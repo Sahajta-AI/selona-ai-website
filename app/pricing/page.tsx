@@ -3,14 +3,15 @@ import Link from "next/link";
 import { PageHeader } from "@/components/PageHeader";
 import { Reveal } from "@/components/Reveal";
 import { CtaBand } from "@/components/home/CtaBand";
-import { pricingIntro, pricingTiers } from "@/lib/legacy-content";
+import { getContent } from "@/lib/content";
 
-export const metadata: Metadata = {
-  title: "Pricing",
-  description: pricingIntro.sub,
-};
+export async function generateMetadata(): Promise<Metadata> {
+  return (await getContent()).pricing.meta;
+}
 
-export default function PricingPage() {
+export default async function PricingPage() {
+  const pricingIntro = (await getContent()).pricing;
+  const pricingTiers = pricingIntro.tiers;
   return (
     <>
       <section className="gutter">
@@ -23,7 +24,7 @@ export default function PricingPage() {
         <div className="mx-auto grid max-w-6xl gap-5 pb-10 md:grid-cols-3">
           {pricingTiers.map((tier, i) => (
             <Reveal
-              key={tier.name}
+              key={i}
               delay={i * 100}
               className={`flex min-h-full flex-col gap-5 rounded-lg p-6 md:p-8 ${
                 tier.highlighted
@@ -55,8 +56,8 @@ export default function PricingPage() {
                 {tier.cta}
               </Link>
               <ul className="flex flex-col gap-2.5">
-                {tier.features.map((f) => (
-                  <li key={f} className="flex items-start gap-2.5">
+                {tier.features.map((f, fi) => (
+                  <li key={fi} className="flex items-start gap-2.5">
                     <span aria-hidden="true" className="mt-0.5 text-sky">
                       ✓
                     </span>

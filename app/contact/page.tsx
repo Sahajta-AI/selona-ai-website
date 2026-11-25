@@ -3,14 +3,16 @@ import { PageHeader } from "@/components/PageHeader";
 import { Reveal } from "@/components/Reveal";
 import { ContactForm } from "@/components/ContactForm";
 import { Faq } from "@/components/Faq";
-import { contactIntro, site } from "@/lib/legacy-content";
+import { getContent } from "@/lib/content";
 
-export const metadata: Metadata = {
-  title: "Contact",
-  description: contactIntro.sub,
-};
+export async function generateMetadata(): Promise<Metadata> {
+  return (await getContent()).contact.meta;
+}
 
-export default function ContactPage() {
+export default async function ContactPage() {
+  const c = await getContent();
+  const contactIntro = c.contact;
+  const site = c.shared.contact;
   return (
     <>
       <section className="gutter">
@@ -22,15 +24,14 @@ export default function ContactPage() {
 
         <div className="mx-auto grid max-w-5xl gap-8 pb-20 lg:grid-cols-[0.8fr_1.2fr] lg:items-start">
           <Reveal className="flex flex-col gap-5 rounded-lg border border-line bg-tint/60 p-6 md:p-8">
-            <h2 className="type-h3 text-ink-deep">What we will cover</h2>
+            <h2 className="type-h3 text-ink-deep">{contactIntro.coverTitle}</h2>
             <ul className="flex flex-col gap-3 text-body-60">
-              <li className="type-body">Your first recurring finance workflow</li>
-              <li className="type-body">Context and source-file setup</li>
-              <li className="type-body">Output templates and audit trail needs</li>
-              <li className="type-body">Approved model and deployment preferences</li>
+              {contactIntro.coverItems.map((item, i) => (
+                <li key={i} className="type-body">{item}</li>
+              ))}
             </ul>
             <p className="type-body text-body-60">
-              For enquiries:{" "}
+              {site.enquiriesLabel}{" "}
               <a
                 href={`mailto:${site.email}`}
                 className="inline-flex min-h-[44px] min-w-[44px] items-center align-middle text-action hover:text-sky"
@@ -42,28 +43,30 @@ export default function ContactPage() {
 
           <Reveal className="rounded-lg border border-line bg-paper p-6 md:p-8">
             <ContactForm
-              submitLabel="Request my walkthrough"
+              submitLabel={contactIntro.submit}
+              messages={c.shared.form}
+              email={site.email}
               fields={[
-                { name: "name", label: "Name", autoComplete: "name" },
+                { name: "name", label: contactIntro.labels.name, autoComplete: "name" },
                 {
                   name: "email",
-                  label: "Work email",
+                  label: contactIntro.labels.email,
                   type: "email",
                   autoComplete: "email",
                 },
                 {
                   name: "company",
-                  label: "Company",
+                  label: contactIntro.labels.company,
                   autoComplete: "organization",
                 },
                 {
                   name: "role",
-                  label: "Role",
+                  label: contactIntro.labels.role,
                   autoComplete: "organization-title",
                 },
                 {
                   name: "workflow",
-                  label: "First workflow you want to automate",
+                  label: contactIntro.labels.workflow,
                   textarea: true,
                 },
               ]}
@@ -71,7 +74,7 @@ export default function ContactPage() {
           </Reveal>
         </div>
       </section>
-      <Faq />
+      <Faq faq={c.shared.faq} email={site.email} enquiriesLabel={site.enquiriesLabel} />
     </>
   );
 }

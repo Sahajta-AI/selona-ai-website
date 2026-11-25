@@ -1,8 +1,8 @@
 import { Reveal, WordReveal } from "@/components/Reveal";
 import { VisualFrame } from "@/components/home/VisualSystem";
-import { problems } from "@/lib/legacy-content";
+import { getContent, type Content } from "@/lib/content";
 
-function ProblemFailureVisual() {
+function ProblemFailureVisual({ problems }: { problems: Content["home"]["problems"] }) {
   return (
     <VisualFrame className="p-4 md:p-6">
       <div className="relative flex min-h-[520px] flex-col justify-between gap-5 md:min-h-[560px]">
@@ -16,14 +16,14 @@ function ProblemFailureVisual() {
         />
 
         <div className="relative mx-auto flex w-full max-w-sm flex-col items-center gap-2 rounded-[22px] border border-line bg-white/86 px-5 py-4 text-center shadow-[0_18px_50px_rgba(13,22,48,0.06)]">
-          <span className="type-eyebrow text-body-60">Blank prompt surface</span>
-          <p className="type-h3 text-ink-deep">Generic AI starts without finance controls.</p>
+          <span className="type-eyebrow text-body-60">{problems.surfaceLabel}</span>
+          <p className="type-h3 text-ink-deep">{problems.surfaceTitle}</p>
         </div>
 
         <div className="relative grid gap-3 sm:grid-cols-2">
           {problems.items.map((item, index) => (
             <div
-              key={item.name}
+              key={index}
               className="group rounded-[18px] border border-line bg-white/82 p-3.5 shadow-[0_12px_34px_rgba(13,22,48,0.04)]"
             >
               <div className="mb-3 flex items-center gap-2">
@@ -42,17 +42,15 @@ function ProblemFailureVisual() {
         </div>
 
         <div className="relative rounded-[18px] border border-action/15 bg-action/10 p-4">
-          <p className="text-sm font-medium leading-6 text-ink">
-            The issue is not intelligence. It is the missing control structure
-            around context, cost, evidence, and repeatability.
-          </p>
+          <p className="text-sm font-medium leading-6 text-ink">{problems.note}</p>
         </div>
       </div>
     </VisualFrame>
   );
 }
 
-export function Problems() {
+export async function Problems() {
+  const problems = (await getContent()).home.problems;
   return (
     <section id="problem" className="gutter scroll-mt-28 bg-mist/60 py-14 md:py-24">
       <div className="mx-auto grid max-w-6xl gap-8 md:gap-12 lg:grid-cols-[0.82fr_1.18fr] lg:items-center">
@@ -72,7 +70,7 @@ export function Problems() {
         </div>
 
         <Reveal delay={160}>
-          <ProblemFailureVisual />
+          <ProblemFailureVisual problems={problems} />
         </Reveal>
       </div>
     </section>

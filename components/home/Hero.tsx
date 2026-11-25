@@ -3,7 +3,7 @@
 import { useEffect, useRef, Fragment } from "react";
 import Link from "next/link";
 import { Reveal } from "@/components/Reveal";
-import { site } from "@/lib/legacy-content";
+import type { Content } from "@/lib/content/paths";
 
 // Matches selona.ai's live hero technique: an oversized video sits absolutely
 // behind the centered text stack, desaturated (grayscale + invert + dimmed)
@@ -11,7 +11,7 @@ import { site } from "@/lib/legacy-content";
 // and the text so it reads as ambient light, not a discrete video card.
 // Two encodes ship (desktop 1280w, mobile 720w, no audio track) so mobile
 // doesn't pay for 4K bytes it will crop and desaturate anyway.
-export function Hero() {
+export function Hero({ hero }: { hero: Content["home"]["hero"] }) {
   const headlineRef = useRef<HTMLHeadingElement | null>(null);
   const videoRef = useRef<HTMLVideoElement | null>(null);
 
@@ -104,7 +104,7 @@ export function Hero() {
     });
   }, []);
 
-  const words = site.headline.split(" ");
+  const words = hero.headline.split(" ");
 
   return (
     <section className="gutter relative isolate flex min-h-[82svh] items-center overflow-hidden pt-28 pb-20 md:min-h-[86svh] md:pt-36 md:pb-24">
@@ -124,10 +124,10 @@ export function Hero() {
       >
         <source
           media="(max-width: 767px)"
-          src="/brand/selona-loop-mobile.mp4"
+          src={hero.videoMobileSrc}
           type="video/mp4"
         />
-        <source src="/brand/selona-loop-desktop.mp4" type="video/mp4" />
+        <source src={hero.videoSrc} type="video/mp4" />
       </video>
 
       <div
@@ -159,14 +159,14 @@ export function Hero() {
       <div className="relative z-10 mx-auto flex w-full max-w-[900px] flex-col items-center gap-6 text-center md:gap-7">
         <Reveal delay={150}>
           <p className="inline-flex min-h-[40px] items-center rounded-full border border-line bg-white/66 px-4 text-sm font-medium text-ink shadow-sm backdrop-blur-md">
-            {site.eyebrow}
+            {hero.eyebrow}
           </p>
         </Reveal>
 
         <h1
           ref={headlineRef}
           className="type-hero hero-3d text-balance"
-          aria-label={site.headline}
+          aria-label={hero.headline}
         >
           {words.map((word, i) => (
             <Fragment key={i}>
@@ -197,7 +197,7 @@ export function Hero() {
           delay={420}
           className="type-lead max-w-[660px] text-balance text-body-60"
         >
-          {site.subheadline}
+          {hero.subheadline}
         </Reveal>
         <Reveal
           delay={560}
@@ -207,13 +207,13 @@ export function Hero() {
             href="/#control-layer"
             className="inline-flex min-h-[44px] items-center justify-center rounded-full bg-ink-deep px-5 text-sm font-medium text-white shadow-[0_10px_24px_rgba(13,22,48,0.12)] transition-colors duration-200 hover:bg-ink"
           >
-            See how it works
+            {hero.primary}
           </Link>
           <Link
             href="/#use-cases"
             className="inline-flex min-h-[44px] items-center justify-center text-sm font-medium text-ink underline decoration-line underline-offset-8 transition-colors duration-200 hover:text-action"
           >
-            View use cases
+            {hero.secondary}
           </Link>
         </Reveal>
       </div>

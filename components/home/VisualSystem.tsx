@@ -32,6 +32,8 @@ export function VisualFrame({
   );
 }
 
+export type Tone = "blue" | "navy" | "green" | "amber";
+
 export function MiniArtifact({
   label,
   title,
@@ -42,7 +44,7 @@ export function MiniArtifact({
   label: string;
   title: string;
   meta: string;
-  tone?: "blue" | "navy" | "green" | "amber";
+  tone?: Tone;
   className?: string;
 }) {
   const toneClass = {

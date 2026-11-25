@@ -9,3 +9,5 @@ One line per finished or blocked task: `<IST time> <task-id> <done|BLOCKED>: <on
 2026-11-25 22:12 IST T05 done: content/defaults.json holds 400 texts, 13 images, 2 videos; inventory in CONTENT-INVENTORY.md.
 2026-11-25 22:14 IST T06 done: lib/content (paths, store, versions, getContent) + unit tests green; build green.
 2026-11-25 22:24 IST T07 done: layout metadata, nav, footer, logo, 404 read from content; parity test (text + 1440/390 screenshots) 21/21 green locally.
+2026-11-25 22:30 IST T08 done: every home section reads from content (committed with T09: Faq is shared, so the build needed both).
+2026-11-25 22:30 IST T09 done: pricing, contact (+form labels/messages), security, privacy, apply-now, titles/meta read from content; dead components removed; parity 21/21 green.

@@ -1,15 +1,20 @@
 "use client";
 
 import { useId, useState, type FormEvent } from "react";
-import { site } from "@/lib/legacy-content";
+import type { Content } from "@/lib/content/paths";
 
-// Submissions are delivered to site.formRecipient via FormSubmit.co's AJAX
+// shortcut: kept in code on purpose, so a signed-in editor cannot redirect enquiries
+const formRecipient = "rahul@selona.ai";
+
+// Submissions are delivered to formRecipient via FormSubmit.co's AJAX
 // endpoint — no backend or API key required. The first-ever submission sends
 // a one-time activation email to that inbox which must be confirmed before
 // deliveries start.
 export function ContactForm({
   fields,
-  submitLabel = "Submit",
+  submitLabel,
+  messages,
+  email,
 }: {
   fields: {
     name: string;
@@ -18,7 +23,9 @@ export function ContactForm({
     textarea?: boolean;
     autoComplete?: string;
   }[];
-  submitLabel?: string;
+  submitLabel: string;
+  messages: Content["shared"]["form"];
+  email: string;
 }) {
   const formId = useId();
   const [status, setStatus] = useState<
@@ -58,7 +65,7 @@ export function ContactForm({
     setStatus("sending");
     try {
       const res = await fetch(
-        `https://formsubmit.co/ajax/${site.formRecipient}`,
+        `https://formsubmit.co/ajax/${formRecipient}`,
         {
           method: "POST",
           headers: {
@@ -113,22 +120,21 @@ export function ContactForm({
         disabled={status === "sending"}
         className="mt-1 min-h-[44px] rounded-full bg-ink-deep px-6 py-3 text-sm font-medium text-white shadow-[0_10px_24px_rgba(13,22,48,0.12)] transition-colors duration-200 hover:bg-ink disabled:cursor-wait disabled:opacity-70"
       >
-        {status === "sending" ? "Sending…" : submitLabel}
+        {status === "sending" ? messages.sending : submitLabel}
       </button>
       {status === "invalid" && (
         <p role="alert" className="type-body text-action">
-          Please complete each field with a valid work email before submitting.
+          {messages.invalid}
         </p>
       )}
       {status === "error" && (
         <p role="alert" className="type-body text-action">
-          Something went wrong sending your request. Please try again, or write
-          to us directly at {site.email}.
+          {messages.errorBefore} {email}.
         </p>
       )}
       {status === "success" && (
         <p role="status" className="type-body text-body-60">
-          Thanks — your request has been received. We will be in touch shortly.
+          {messages.success}
         </p>
       )}
     </form>

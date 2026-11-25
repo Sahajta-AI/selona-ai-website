@@ -3,19 +3,20 @@ import {
   MiniArtifact,
   SystemChip,
   VisualFrame,
+  type Tone,
 } from "@/components/home/VisualSystem";
-import { mechanism } from "@/lib/legacy-content";
+import { getContent, type Content } from "@/lib/content";
 
 function FlowColumn({
   eyebrow,
   title,
   items,
-  direction,
+  badge,
 }: {
   eyebrow: string;
   title: string;
   items: string[];
-  direction: "in" | "out";
+  badge: string;
 }) {
   return (
     <div className="flex min-h-full flex-col gap-4 rounded-[22px] border border-line bg-white/82 p-4 md:p-5">
@@ -28,13 +29,13 @@ function FlowColumn({
           aria-hidden="true"
           className="hidden rounded-full bg-tint px-3 py-1 text-sm font-semibold text-action md:inline-flex"
         >
-          {direction === "in" ? "Input" : "Output"}
+          {badge}
         </span>
       </div>
       <ul className="grid gap-2">
-        {items.map((item) => (
+        {items.map((item, i) => (
           <li
-            key={item}
+            key={i}
             className="flex items-center gap-2 rounded-full border border-line bg-paper px-3 py-2 text-sm font-medium text-ink"
           >
             <span
@@ -49,7 +50,7 @@ function FlowColumn({
   );
 }
 
-function ControlLayerDiagram() {
+function ControlLayerDiagram({ mechanism }: { mechanism: Content["home"]["mechanism"] }) {
   return (
     <VisualFrame className="p-4 md:p-6">
       <div className="relative grid gap-4 lg:grid-cols-[0.95fr_1.1fr_0.95fr] lg:items-stretch">
@@ -59,10 +60,10 @@ function ControlLayerDiagram() {
         />
 
         <FlowColumn
-          eyebrow="Controlled source"
-          title="Inputs"
+          eyebrow={mechanism.inputsEyebrow}
+          title={mechanism.inputsTitle}
           items={mechanism.inputs}
-          direction="in"
+          badge={mechanism.inputBadge}
         />
 
         <div className="relative overflow-hidden rounded-[24px] bg-ink-deep p-5 text-white shadow-[0_24px_70px_rgba(13,22,48,0.18)] md:p-6">
@@ -76,53 +77,42 @@ function ControlLayerDiagram() {
           />
           <div className="relative flex h-full min-h-[360px] flex-col justify-between gap-8">
             <div>
-              <p className="type-eyebrow text-sky">ThinkAIWork</p>
+              <p className="type-eyebrow text-sky">{mechanism.layerEyebrow}</p>
               <h3 className="mt-2 text-2xl font-semibold leading-tight text-white">
-                Control layer
+                {mechanism.layerTitle}
               </h3>
-              <p className="mt-3 text-sm leading-6 text-white/68">
-                Context, skills, templates, model rules, and budget logic sit
-                between finance data and AI output.
-              </p>
+              <p className="mt-3 text-sm leading-6 text-white/68">{mechanism.layerBody}</p>
             </div>
 
             <div className="grid gap-2">
-              {mechanism.layer.map((item) => (
-                <SystemChip key={item} tone="dark">
+              {mechanism.layer.map((item, i) => (
+                <SystemChip key={i} tone="dark">
                   {item}
                 </SystemChip>
               ))}
             </div>
 
             <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-1">
-              <MiniArtifact
-                label="Version"
-                title="Context v2.4 approved"
-                meta="Reusable"
-                tone="blue"
-              />
-              <MiniArtifact
-                label="Policy"
-                title="Board output template locked"
-                meta="Auditable"
-                tone="green"
-              />
+              {mechanism.artifacts.map((a, i) => (
+                <MiniArtifact key={i} {...a} tone={a.tone as Tone} />
+              ))}
             </div>
           </div>
         </div>
 
         <FlowColumn
-          eyebrow="Structured return"
-          title="Outputs"
+          eyebrow={mechanism.outputsEyebrow}
+          title={mechanism.outputsTitle}
           items={mechanism.outputs}
-          direction="out"
+          badge={mechanism.outputBadge}
         />
       </div>
     </VisualFrame>
   );
 }
 
-export function ControlMechanism() {
+export async function ControlMechanism() {
+  const mechanism = (await getContent()).home.mechanism;
   return (
     <section id="control-layer" className="gutter scroll-mt-28 py-14 md:py-24">
       <div className="mx-auto flex max-w-6xl flex-col gap-9 md:gap-12">
@@ -142,7 +132,7 @@ export function ControlMechanism() {
         </div>
 
         <Reveal delay={160}>
-          <ControlLayerDiagram />
+          <ControlLayerDiagram mechanism={mechanism} />
         </Reveal>
       </div>
     </section>

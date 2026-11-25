@@ -10,13 +10,15 @@ import { TrustSection } from "@/components/home/TrustSection";
 import { PrivateBeta } from "@/components/home/PrivateBeta";
 import { CtaBand } from "@/components/home/CtaBand";
 import { Faq } from "@/components/Faq";
+import { getContent } from "@/lib/content";
 
-export default function Home() {
+export default async function Home() {
+  const c = await getContent();
   return (
     <>
-      <Hero />
+      <Hero hero={c.home.hero} />
       <CredibilityStrip />
-      <ProductShowcase />
+      <ProductShowcase showcase={c.home.showcase} />
       <Problems />
       <ControlMechanism />
       <WorkflowProof />
@@ -25,7 +27,7 @@ export default function Home() {
       <TrustSection />
       <PrivateBeta />
       <CtaBand />
-      <Faq />
+      <Faq faq={c.shared.faq} email={c.shared.contact.email} enquiriesLabel={c.shared.contact.enquiriesLabel} />
     </>
   );
 }

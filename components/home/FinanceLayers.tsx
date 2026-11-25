@@ -1,9 +1,10 @@
 import Image from "next/image";
 import { Reveal, WordReveal } from "@/components/Reveal";
 import { VisualFrame } from "@/components/home/VisualSystem";
-import { financeLayers } from "@/lib/legacy-content";
+import { getContent } from "@/lib/content";
 
-export function FinanceLayers() {
+export async function FinanceLayers() {
+  const financeLayers = (await getContent()).home.layers;
   return (
     <section id="layers" className="gutter scroll-mt-28 bg-mist/60 py-14 md:py-24">
       <div className="mx-auto grid max-w-6xl gap-9 md:gap-12 lg:grid-cols-[0.9fr_1.1fr] lg:items-start">
@@ -27,8 +28,8 @@ export function FinanceLayers() {
             <VisualFrame className="p-3">
               <div className="relative aspect-[16/11] w-full overflow-hidden rounded-[18px] bg-tint/50">
                 <Image
-                  src="/product/visual-context-builder.svg"
-                  alt="ThinkAIWork context builder product visual"
+                  src={financeLayers.imageSrc}
+                  alt={financeLayers.imageAlt}
                   fill
                   sizes="(min-width: 1024px) 420px, 100vw"
                   className="object-contain p-4"
@@ -41,7 +42,7 @@ export function FinanceLayers() {
         <div className="grid gap-4 md:grid-cols-2">
           {financeLayers.items.map((layer, i) => (
             <Reveal
-              key={layer.name}
+              key={i}
               delay={i * 70}
               className="group flex min-h-full flex-col gap-3 overflow-hidden rounded-[22px] border border-line bg-paper p-3.5 shadow-[0_14px_40px_rgba(13,22,48,0.04)] md:p-4"
             >
@@ -51,8 +52,8 @@ export function FinanceLayers() {
                   className="absolute left-3 right-3 top-3 z-10 h-1 rounded-full bg-action/18"
                 />
                 <Image
-                  src={layer.visual}
-                  alt={`${layer.name} product visual`}
+                  src={layer.visualSrc}
+                  alt={layer.visualAlt}
                   fill
                   sizes="(min-width: 1024px) 300px, 45vw"
                   className="object-contain p-4 pt-6"
@@ -70,9 +71,9 @@ export function FinanceLayers() {
             <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
               <p className="type-lead max-w-3xl text-white/86">{financeLayers.modelFlex}</p>
               <div className="flex flex-wrap gap-2" aria-hidden="true">
-                {["Claude", "OpenAI", "Local"].map((model) => (
+                {financeLayers.models.map((model, mi) => (
                   <span
-                    key={model}
+                    key={mi}
                     className="rounded-full border border-white/14 bg-white/10 px-3 py-1.5 text-sm text-white/78"
                   >
                     {model}

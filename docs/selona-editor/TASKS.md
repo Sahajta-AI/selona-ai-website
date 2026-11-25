@@ -11,7 +11,7 @@ In order. Each points to its part of `BRIEF.md` ("§" = section heading) and say
 
 ## Content out of the code
 
-- [ ] T05 Content inventory. §Content out of the code. Done when every text string, image and the video on every route and shared component (nav, footer, buttons, FAQs, form labels, titles, meta descriptions) is listed with its future content key.
+- [x] T05 Content inventory. §Content out of the code. Done when every text string, image and the video on every route and shared component (nav, footer, buttons, FAQs, form labels, titles, meta descriptions) is listed with its future content key.
 - [ ] T06 Content model and repo defaults. §Content out of the code (defaults bullet). Done when a typed content schema and a defaults JSON in the repo hold the full inventory, and a server-side `getContent()` returns the defaults.
 - [ ] T07 Shared parts read from content: layout metadata, nav, footer, buttons, 404. Done when they render from `getContent()` and the text parity check passes for them.
 - [ ] T08 Home page sections read from content. Done when every home component renders from content and home text parity is zero differences.

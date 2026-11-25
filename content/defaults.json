@@ -1,0 +1,781 @@
+{
+  "shared": {
+    "meta": {
+      "title": "Selona | The Control Layer for Finance AI",
+      "titleTemplate": "%s | Selona",
+      "description": "ThinkAIWork turns company context, source files, workflows, and templates into structured, auditable outputs across the AI models your team chooses."
+    },
+    "brand": {
+      "logoSrc": "/brand/selona-logo-official.svg",
+      "logoAlt": "Selona",
+      "homeLabel": "Selona home"
+    },
+    "contact": {
+      "email": "info@selona.ai",
+      "bookingUrl": "https://meetings-eu1.hubspot.com/rahul4",
+      "enquiriesLabel": "For enquiries:"
+    },
+    "nav": {
+      "links": [
+        {
+          "label": "Platform",
+          "href": "/#control-layer"
+        },
+        {
+          "label": "Use cases",
+          "href": "/#use-cases"
+        },
+        {
+          "label": "Pricing",
+          "href": "/pricing"
+        }
+      ],
+      "contact": "Contact",
+      "openMenu": "Open menu",
+      "closeMenu": "Close menu",
+      "mobileLinks": [
+        {
+          "label": "Contact",
+          "href": "/contact"
+        },
+        {
+          "label": "Book a walkthrough",
+          "href": "/contact"
+        }
+      ]
+    },
+    "footer": {
+      "tagline": "ThinkAIWork by Selona — controlled AI workflows for finance teams.",
+      "columns": [
+        {
+          "title": "Platform",
+          "links": [
+            {
+              "label": "Problem",
+              "href": "/#problem"
+            },
+            {
+              "label": "Control layer",
+              "href": "/#control-layer"
+            },
+            {
+              "label": "Product layers",
+              "href": "/#layers"
+            },
+            {
+              "label": "Use cases",
+              "href": "/#use-cases"
+            }
+          ]
+        },
+        {
+          "title": "Company",
+          "links": [
+            {
+              "label": "Pricing",
+              "href": "/pricing"
+            },
+            {
+              "label": "Contact",
+              "href": "/contact"
+            },
+            {
+              "label": "Privacy",
+              "href": "/privacy"
+            }
+          ]
+        },
+        {
+          "title": "Resources",
+          "links": [
+            {
+              "label": "FAQs",
+              "href": "/#faq"
+            },
+            {
+              "label": "Security review",
+              "href": "/security"
+            },
+            {
+              "label": "Walkthrough",
+              "href": "/contact"
+            }
+          ]
+        }
+      ],
+      "enquiriesTitle": "Enquiries",
+      "bottomLine": "Selona. Finance control infrastructure for AI.",
+      "privacy": "Privacy"
+    },
+    "cta": {
+      "eyebrow": "SEE THE CONTROL LAYER",
+      "heading": "Book a ThinkAIWork walkthrough.",
+      "sub": "See how controlled AI workflows can support board reporting, variance analysis, reconciliations, and recurring CFO work.",
+      "primary": "Request a demo",
+      "secondary": "See how it works",
+      "calendarLink": "Prefer a calendar link? Book directly →"
+    },
+    "faq": {
+      "heading": "Frequently asked questions",
+      "sub": "Find some quick answers to the most common questions.",
+      "items": [
+        {
+          "q": "What is ThinkAIWork?",
+          "a": "ThinkAIWork is Selona's AI-agnostic workspace for finance teams and fractional CFOs. It turns controlled inputs into structured, auditable outputs for recurring finance work."
+        },
+        {
+          "q": "How is it different from generic AI tools?",
+          "a": "Generic tools start from a blank prompt. ThinkAIWork lets teams define context, versions, reusable skills, output templates, budget limits, and model routing before workflows run."
+        },
+        {
+          "q": "Which finance workflows does it support first?",
+          "a": "The private beta is focused on recurring CFO work such as board commentary, variance analysis, VAT/GST reconciliation, stakeholder updates, management accounts, and forecast narratives."
+        },
+        {
+          "q": "Can we change AI models later?",
+          "a": "Yes. ThinkAIWork is designed so context, skills, and templates can be reused across Anthropic, OpenAI, and local model deployments without rebuilding the finance workflow from scratch."
+        },
+        {
+          "q": "What security information is available?",
+          "a": "Security documentation is available on request. Public pages avoid unconfirmed certification or deployment claims until they are formally documented."
+        }
+      ]
+    },
+    "form": {
+      "sending": "Sending…",
+      "submit": "Submit",
+      "invalid": "Please complete each field with a valid work email before submitting.",
+      "errorBefore": "Something went wrong sending your request. Please try again, or write to us directly at",
+      "success": "Thanks — your request has been received. We will be in touch shortly."
+    }
+  },
+  "home": {
+    "hero": {
+      "eyebrow": "ThinkAIWork by Selona",
+      "headline": "The control layer starting with finance AI",
+      "subheadline": "ThinkAIWork turns company context, source files, workflows, and templates into structured, auditable outputs, across the AI models your team chooses.",
+      "primary": "See how it works",
+      "secondary": "View use cases",
+      "videoSrc": "/brand/selona-loop-desktop.mp4",
+      "videoMobileSrc": "/brand/selona-loop-mobile.mp4"
+    },
+    "credibility": {
+      "label": "ThinkAIWork credibility",
+      "items": [
+        "Private beta",
+        "10 fractional CFOs",
+        "3 partner channels",
+        "Model-agnostic architecture"
+      ]
+    },
+    "showcase": {
+      "eyebrow": "Inside ThinkAIWork",
+      "lead": "See how finance workflows become structured, repeatable, and auditable.",
+      "imageSrc": "/media/thinkaiwork-context-accelerator.jpeg",
+      "imageAlt": "ThinkAIWork context accelerator workflow preview"
+    },
+    "problems": {
+      "eyebrow": "THE PROBLEM",
+      "heading": "Generic AI was not built for finance control.",
+      "intro": "Finance teams do not just need faster answers. They need repeatable context, consistent outputs, controlled costs, model flexibility, and an audit trail they can defend.",
+      "surfaceLabel": "Blank prompt surface",
+      "surfaceTitle": "Generic AI starts without finance controls.",
+      "items": [
+        {
+          "name": "Generic output",
+          "body": "No board voice, no company context, no competitive edge."
+        },
+        {
+          "name": "Context drift",
+          "body": "Institutional knowledge gets re-explained every month — then disappears again."
+        },
+        {
+          "name": "No fixed structure",
+          "body": "Different analyst, different output. No repeatability, no trust."
+        },
+        {
+          "name": "Exploding token cost",
+          "body": "The same context is resent every call, with little visibility into spend."
+        },
+        {
+          "name": "Model lock-in",
+          "body": "Prompts, workflows, and outputs become trapped inside one vendor."
+        },
+        {
+          "name": "Cluttered context",
+          "body": "Files, teams, entities, and geographies become impossible to govern."
+        }
+      ],
+      "note": "The issue is not intelligence. It is the missing control structure around context, cost, evidence, and repeatability."
+    },
+    "mechanism": {
+      "eyebrow": "CONTROL LAYER",
+      "heading": "Controlled inputs in. Structured outputs out.",
+      "sub": "ThinkAIWork gives finance teams a control layer for what goes into AI, how it is used, and what comes back.",
+      "inputsEyebrow": "Controlled source",
+      "inputsTitle": "Inputs",
+      "inputBadge": "Input",
+      "inputs": [
+        "Company context",
+        "KPI definitions",
+        "Board style",
+        "Stakeholder red lines",
+        "Source files",
+        "Budget limits",
+        "Output rules"
+      ],
+      "layerEyebrow": "ThinkAIWork",
+      "layerTitle": "Control layer",
+      "layerBody": "Context, skills, templates, model rules, and budget logic sit between finance data and AI output.",
+      "layer": [
+        "Context",
+        "Versioning",
+        "Skills",
+        "Templates",
+        "Model routing"
+      ],
+      "artifacts": [
+        {
+          "label": "Version",
+          "title": "Context v2.4 approved",
+          "meta": "Reusable",
+          "tone": "blue"
+        },
+        {
+          "label": "Policy",
+          "title": "Board output template locked",
+          "meta": "Auditable",
+          "tone": "green"
+        }
+      ],
+      "outputsEyebrow": "Structured return",
+      "outputsTitle": "Outputs",
+      "outputBadge": "Output",
+      "outputs": [
+        "Board commentary",
+        "Variance analysis",
+        "VAT/GST reconciliation",
+        "Stakeholder updates",
+        "Audit-ready summaries",
+        "Forecast narratives",
+        "Management reports"
+      ]
+    },
+    "workflow": {
+      "eyebrow": "WORKFLOW PROOF",
+      "heading": "A finance workflow, end to end.",
+      "sub": "Example: VAT/GST reconciliation, grounded in source files and reusable finance context.",
+      "steps": [
+        {
+          "step": "01",
+          "label": "Source file",
+          "body": "Upload the VAT report, ledger extract, or reconciliation workbook.",
+          "imageSrc": "/product/input-data.webp",
+          "imageAlt": "ThinkAIWork input data workspace",
+          "artifact": {
+            "label": "Source",
+            "title": "Ledger extract uploaded",
+            "meta": "Linked",
+            "tone": "blue"
+          }
+        },
+        {
+          "step": "02",
+          "label": "Company context",
+          "body": "Apply entity rules, tax periods, chart of accounts, and review preferences.",
+          "imageSrc": "/product/build-context.webp",
+          "imageAlt": "ThinkAIWork company context builder",
+          "artifact": {
+            "label": "Context",
+            "title": "Entity and review rules applied",
+            "meta": "v2.4",
+            "tone": "amber"
+          }
+        },
+        {
+          "step": "03",
+          "label": "Finance skill",
+          "body": "Run the reusable reconciliation workflow with approved model routing.",
+          "imageSrc": "/product/skills-plugins.webp",
+          "imageAlt": "ThinkAIWork reusable finance skill builder",
+          "artifact": {
+            "label": "Skill",
+            "title": "VAT/GST workflow selected",
+            "meta": "Approved",
+            "tone": "navy"
+          }
+        },
+        {
+          "step": "04",
+          "label": "Auditable output",
+          "body": "Return a structured summary with source links, exceptions, and review notes.",
+          "imageSrc": "/product/auditable-output.webp",
+          "imageAlt": "ThinkAIWork auditable output summary with exceptions and source links",
+          "artifact": {
+            "label": "Output",
+            "title": "Exceptions and evidence ready",
+            "meta": "Audit",
+            "tone": "green"
+          }
+        }
+      ]
+    },
+    "layers": {
+      "eyebrow": "SIX PRODUCT LAYERS",
+      "heading": "Every layer is owned by your finance team.",
+      "sub": "ThinkAIWork is not a black box. Your team defines the rules, context, workflows, templates, and outputs.",
+      "imageSrc": "/product/visual-context-builder.svg",
+      "imageAlt": "ThinkAIWork context builder product visual",
+      "items": [
+        {
+          "step": "01",
+          "name": "Setup rules",
+          "body": "Define how ThinkAIWork should behave before any workflow runs.",
+          "visualSrc": "/product/visual-context-builder.svg",
+          "visualAlt": "Setup rules product visual"
+        },
+        {
+          "step": "02",
+          "name": "Build context",
+          "body": "Encode company voice, KPIs, policies, source files, board style, and stakeholder sensitivities.",
+          "visualSrc": "/product/visual-version-history.svg",
+          "visualAlt": "Build context product visual"
+        },
+        {
+          "step": "03",
+          "name": "Version context",
+          "body": "Update sponsor priorities, board preferences, assumptions, and operating context once — then reuse everywhere.",
+          "visualSrc": "/product/visual-audit-trail.svg",
+          "visualAlt": "Version context product visual"
+        },
+        {
+          "step": "04",
+          "name": "Optimise tokens",
+          "body": "Compress and route context so recurring workflows stay inside budget.",
+          "visualSrc": "/product/visual-token-budget.svg",
+          "visualAlt": "Optimise tokens product visual"
+        },
+        {
+          "step": "05",
+          "name": "Package skills",
+          "body": "Turn repeat finance tasks into reusable workflows.",
+          "visualSrc": "/product/visual-model-routing.svg",
+          "visualAlt": "Package skills product visual"
+        },
+        {
+          "step": "06",
+          "name": "Control outputs",
+          "body": "Define structure, calculations, tone, evidence, and approval requirements.",
+          "visualSrc": "/product/visual-output-template.svg",
+          "visualAlt": "Control outputs product visual"
+        }
+      ],
+      "modelFlex": "Start on Claude. Run Anthropic, OpenAI, or local models without rebuilding context.",
+      "models": [
+        "Claude",
+        "OpenAI",
+        "Local"
+      ]
+    },
+    "useCases": {
+      "eyebrow": "USE CASES",
+      "heading": "Built for recurring finance work.",
+      "sub": "Each workflow becomes a reusable artifact, not a one-off prompt.",
+      "items": [
+        {
+          "name": "Board deck commentary",
+          "label": "Board",
+          "title": "Commentary pack",
+          "meta": "Template",
+          "tone": "blue"
+        },
+        {
+          "name": "Variance analysis",
+          "label": "Variance",
+          "title": "Driver narrative",
+          "meta": "Source",
+          "tone": "amber"
+        },
+        {
+          "name": "VAT/GST reconciliation",
+          "label": "VAT/GST",
+          "title": "Exception log",
+          "meta": "Audit",
+          "tone": "green"
+        },
+        {
+          "name": "Stakeholder updates",
+          "label": "Update",
+          "title": "Stakeholder memo",
+          "meta": "Review",
+          "tone": "navy"
+        },
+        {
+          "name": "Management accounts",
+          "label": "Accounts",
+          "title": "Close summary",
+          "meta": "Monthly",
+          "tone": "blue"
+        },
+        {
+          "name": "Forecast commentary",
+          "label": "Forecast",
+          "title": "Scenario notes",
+          "meta": "Model",
+          "tone": "amber"
+        },
+        {
+          "name": "Audit evidence packs",
+          "label": "Evidence",
+          "title": "Support pack",
+          "meta": "Linked",
+          "tone": "green"
+        },
+        {
+          "name": "CFO operating reviews",
+          "label": "Review",
+          "title": "CFO operating view",
+          "meta": "Reusable",
+          "tone": "navy"
+        }
+      ]
+    },
+    "trust": {
+      "eyebrow": "TRUST AND CONTROL",
+      "heading": "Designed for outputs you can defend.",
+      "items": [
+        "Source-linked outputs",
+        "Context versioning",
+        "Template-controlled structure",
+        "Token budget visibility",
+        "Model flexibility",
+        "Workspace access review",
+        "Approval-ready workflows",
+        "Security documentation available on request"
+      ],
+      "evidenceEyebrow": "Output evidence",
+      "evidenceTitle": "Board commentary",
+      "evidenceBadge": "Review ready",
+      "artifacts": [
+        {
+          "label": "Source",
+          "title": "Ledger extract line 184 linked",
+          "meta": "Evidence",
+          "tone": "green"
+        },
+        {
+          "label": "Template",
+          "title": "Board voice and structure locked",
+          "meta": "v1.8",
+          "tone": "blue"
+        },
+        {
+          "label": "Model",
+          "title": "Approved routing policy used",
+          "meta": "Policy",
+          "tone": "navy"
+        }
+      ],
+      "controlsEyebrow": "Control state",
+      "controls": [
+        "Source links",
+        "Version history",
+        "Access review",
+        "Approval trail"
+      ],
+      "controlsNote": "Finance teams can defend how each answer was shaped, which source was used, and what approval path it followed."
+    },
+    "beta": {
+      "eyebrow": "PRIVATE BETA",
+      "heading": "Private beta with finance operators.",
+      "sub": "ThinkAIWork is being shaped with fractional CFOs and finance teams turning recurring finance work into reusable, auditable AI workflows.",
+      "stats": [
+        {
+          "value": "10",
+          "label": "Fractional CFOs using the platform"
+        },
+        {
+          "value": "3",
+          "label": "Partner channels signed"
+        }
+      ],
+      "signalEyebrow": "Early signal",
+      "feedback": "Early user feedback: ThinkAIWork gives us a clearer audit trail before external review.",
+      "testimonialsEyebrow": "Early customer testimonials",
+      "testimonials": [
+        {
+          "quote": "With ThinkAIWork I can expand beyond my traditional CFO role into operations too.",
+          "attribution": "Fractional CFO, early user"
+        },
+        {
+          "quote": "The platform truly drives a lot of value — I don’t have to pay premium dollars to auditors anymore.",
+          "attribution": "CFO, enterprise pilot"
+        }
+      ]
+    }
+  },
+  "pricing": {
+    "meta": {
+      "title": "Pricing",
+      "description": "Packages are shaped around workflow scope, context complexity, integrations, and support requirements."
+    },
+    "eyebrow": "PRICING",
+    "heading": "Choose the right starting point for your finance workflows.",
+    "sub": "Packages are shaped around workflow scope, context complexity, integrations, and support requirements.",
+    "tiers": [
+      {
+        "name": "Pilot",
+        "model": "Start",
+        "cta": "Discuss a pilot",
+        "description": "For one finance team starting with one controlled workflow.",
+        "features": [
+          "Context setup",
+          "One use-case workflow",
+          "Output template",
+          "Guided onboarding",
+          "Demo workspace",
+          "Initial support"
+        ],
+        "highlighted": false
+      },
+      {
+        "name": "Team",
+        "model": "Standardize",
+        "cta": "Scope workflows",
+        "description": "For finance teams standardizing recurring workflows.",
+        "features": [
+          "Shared context library",
+          "Multiple workflows",
+          "Skills and plugin support",
+          "Versioning",
+          "Token budget controls",
+          "Workspace access planning",
+          "Priority support"
+        ],
+        "highlighted": true
+      },
+      {
+        "name": "Enterprise",
+        "model": "Scale",
+        "cta": "Plan deployment",
+        "description": "For multi-entity finance teams and partner-led deployments.",
+        "features": [
+          "Custom integrations",
+          "Security review support",
+          "Model policy configuration",
+          "Managed services",
+          "Dedicated onboarding",
+          "Custom commercial terms"
+        ],
+        "highlighted": false
+      }
+    ],
+    "note": "Pricing depends on seats, context complexity, workflows, integrations, and support requirements."
+  },
+  "contact": {
+    "meta": {
+      "title": "Contact",
+      "description": "See how controlled AI workflows can support board reporting, variance analysis, reconciliations, and recurring CFO work."
+    },
+    "eyebrow": "CONTACT",
+    "heading": "Book a ThinkAIWork walkthrough.",
+    "sub": "See how controlled AI workflows can support board reporting, variance analysis, reconciliations, and recurring CFO work.",
+    "coverTitle": "What we will cover",
+    "coverItems": [
+      "Your first recurring finance workflow",
+      "Context and source-file setup",
+      "Output templates and audit trail needs",
+      "Approved model and deployment preferences"
+    ],
+    "submit": "Request my walkthrough",
+    "labels": {
+      "name": "Name",
+      "email": "Work email",
+      "company": "Company",
+      "role": "Role",
+      "workflow": "First workflow you want to automate"
+    }
+  },
+  "security": {
+    "meta": {
+      "title": "Security Review",
+      "description": "How Selona approaches security review and controlled finance AI workflows."
+    },
+    "eyebrow": "SECURITY REVIEW",
+    "heading": "Built for controlled finance AI workflows.",
+    "sub": "A practical overview of how ThinkAIWork supports reviewable inputs, traceable outputs, and model-flexible deployment discussions.",
+    "sections": [
+      {
+        "heading": "Controlled deployments",
+        "body": "ThinkAIWork is introduced through scoped pilots and deployment reviews so teams can confirm workflow boundaries, model preferences, and operating requirements before broader rollout."
+      },
+      {
+        "heading": "Workspace access and roles",
+        "body": "Workspaces are structured around the teams and workflows using them. Role and access requirements are reviewed during pilot setup so finance teams can define who can prepare, run, and review work."
+      },
+      {
+        "heading": "Source-linked outputs",
+        "body": "Outputs are designed to reference the files, context, and workflow inputs used to produce them, helping reviewers trace where conclusions came from."
+      },
+      {
+        "heading": "Context versioning",
+        "body": "Finance context changes over time. ThinkAIWork is designed around versioned context so teams can understand which assumptions, preferences, and source materials were used."
+      },
+      {
+        "heading": "Approval-ready workflows",
+        "body": "Recurring workflows can be shaped around review steps, exceptions, evidence, and approval notes before outputs are used in finance reporting or stakeholder updates."
+      },
+      {
+        "heading": "Model flexibility",
+        "body": "ThinkAIWork is model-agnostic. Teams can review approved model options and routing preferences before deployment, without making public claims about a single model provider."
+      },
+      {
+        "heading": "Security review materials available for pilots",
+        "body": "Security and deployment materials are available during qualified pilot discussions, including information about the intended workflow, data handling, and review requirements."
+      },
+      {
+        "heading": "Enterprise review before deployment",
+        "body": "Enterprise teams can complete security, legal, and procurement review before production deployment. Certification claims are shared only when formally documented."
+      }
+    ],
+    "contactLine": "For security review materials, contact"
+  },
+  "privacy": {
+    "meta": {
+      "title": "Privacy Policy",
+      "description": "How Selona handles website, enquiry, and pilot information."
+    },
+    "eyebrow": "PRIVACY",
+    "heading": "Privacy Policy",
+    "updated": "Last updated: July 5, 2026",
+    "intro": "This policy explains how Selona handles information collected through this website, walkthrough requests, calendar bookings, and ThinkAIWork pilot discussions.",
+    "sections": [
+      {
+        "heading": "Information we collect",
+        "paragraphs": [
+          "We collect information you choose to provide when you contact Selona, request a walkthrough, ask for security review materials, or discuss a ThinkAIWork pilot."
+        ],
+        "list": [
+          "Contact details such as name, work email, company, role, and message content.",
+          "Workflow information you provide, such as the first finance workflow you want to automate.",
+          "Calendar booking details if you use the meeting link on this website.",
+          "Technical information normally sent by a browser, such as IP address, device type, browser type, referring page, and pages visited."
+        ]
+      },
+      {
+        "heading": "Contact forms and email",
+        "paragraphs": [
+          "The contact form on this website opens a prefilled email to Selona rather than submitting to a hidden form backend. If you send that email, your email provider and our email provider will process the message in the normal course of delivery.",
+          "We use contact information to respond to enquiries, arrange walkthroughs, assess pilot fit, and keep a record of business conversations."
+        ],
+        "list": []
+      },
+      {
+        "heading": "Calendar booking provider",
+        "paragraphs": [
+          "This website links to a HubSpot Meetings booking page. If you use that link, HubSpot may process the information you provide to schedule the meeting and operate the booking flow. HubSpot's own privacy terms apply to that booking experience."
+        ],
+        "list": []
+      },
+      {
+        "heading": "Website analytics and cookies",
+        "paragraphs": [
+          "At the time this policy was last updated, this website does not include a dedicated analytics script such as Google Analytics, Plausible, PostHog, or Segment.",
+          "Hosting, browser, and security infrastructure may still generate basic server logs or technical records. If we add analytics or cookie-based tracking later, we will update this policy to describe it."
+        ],
+        "list": []
+      },
+      {
+        "heading": "Product and pilot data",
+        "paragraphs": [
+          "During a ThinkAIWork pilot, teams may choose to provide source files, company context, workflow requirements, output templates, and review preferences. The handling of pilot or deployment data is governed by the pilot scope, commercial terms, and security review materials agreed with the customer.",
+          "Do not send confidential product or pilot materials through the website contact form unless you are comfortable sending them by email."
+        ],
+        "list": []
+      },
+      {
+        "heading": "How we use information",
+        "paragraphs": [
+          "We use information to respond to enquiries, arrange walkthroughs, evaluate pilot fit, provide requested security or deployment materials, improve the website, and administer business relationships.",
+          "We do not sell personal information. We may share information with service providers who help us operate email, scheduling, hosting, and business systems, or where required by law."
+        ],
+        "list": []
+      },
+      {
+        "heading": "Retention and deletion",
+        "paragraphs": [
+          "We keep enquiry and business-contact information for as long as needed to manage the relationship, respond to the request, maintain business records, or comply with legal obligations.",
+          "You can ask us to update, export, or delete personal information by contacting info@selona.ai. We may need to retain limited records where required for legal, accounting, security, or legitimate business purposes."
+        ],
+        "list": []
+      },
+      {
+        "heading": "UK and EU privacy rights",
+        "paragraphs": [
+          "Where UK GDPR or EU GDPR applies, you may have rights to access, correct, delete, restrict, object to processing, and request portability of your personal data. You may also have the right to complain to your local supervisory authority.",
+          "Where we rely on legitimate interests, those interests include responding to business enquiries, operating and improving the website, arranging pilots, and maintaining appropriate business records."
+        ],
+        "list": []
+      },
+      {
+        "heading": "Security",
+        "paragraphs": [
+          "We take reasonable steps to protect information we handle. No website, email flow, or internet transmission can be guaranteed to be completely secure.",
+          "Security review materials for ThinkAIWork pilots or deployments are available during qualified discussions."
+        ],
+        "list": []
+      },
+      {
+        "heading": "Changes to this policy",
+        "paragraphs": [
+          "We may update this policy as Selona, ThinkAIWork, or our website operations evolve. The updated date below will show when the policy was last changed."
+        ],
+        "list": []
+      },
+      {
+        "heading": "Contact",
+        "paragraphs": [
+          "For privacy questions, data requests, or deletion requests, contact info@selona.ai."
+        ],
+        "list": []
+      }
+    ]
+  },
+  "applyNow": {
+    "meta": {
+      "title": "Apply Now",
+      "description": "Join the engineering team behind ThinkAIWork."
+    },
+    "eyebrow": "APPLY NOW",
+    "heading": "Apply",
+    "sub": "Join our team and build the future of context-driven AI automation.",
+    "roles": [
+      {
+        "eyebrow": "Open role: Remote (UK)",
+        "role": "AI Developer Intern",
+        "details": "Location: Remote (UK). Duration: 3-6 months (with potential for extension or full-time offer). Start Date: Flexible. Stipend: GBP 1200 / Month."
+      },
+      {
+        "eyebrow": "Open role: Remote (India)",
+        "role": "AI Developer Intern",
+        "details": "Location: Remote (India). Duration: 3-6 months (with potential for extension or full-time offer). Start Date: Flexible. Stipend: INR 35000 / Month."
+      }
+    ],
+    "enquiriesLabel": "For role enquiries:",
+    "bookingText": "Book a quick introductory conversation with our talent coordinator.",
+    "bookingLink": "Book a call",
+    "labels": {
+      "name": "Full Name",
+      "email": "Email Address",
+      "role": "Job Role",
+      "resume": "Link to your Resume"
+    }
+  },
+  "notFound": {
+    "code": "404",
+    "heading": "This page seems to have automated itself away.",
+    "body": "The page you are looking for does not exist or has moved.",
+    "home": "Back to home",
+    "contact": "Contact Us"
+  }
+}

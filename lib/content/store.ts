@@ -62,6 +62,31 @@ export async function readJSON<T>(file: StoredFile): Promise<T> {
   return JSON.parse(await new Response(r.stream).text());
 }
 
+// "Current version" pointers: one small file per environment that is overwritten
+// on every publish or draft save and read straight from storage (no cache), so a
+// page rebuilt right after Publish always sees the new version. Blob's file
+// listing can lag a few seconds behind a write; the pointers don't.
+export async function writePointer(name: string, body: string) {
+  if (!useBlob) {
+    if (process.env.VERCEL) throw new Error("Content store is not connected");
+    const file = path.join(localDir, prefix, name);
+    await fs.mkdir(path.dirname(file), { recursive: true });
+    await fs.writeFile(file, body);
+    return;
+  }
+  await put(prefix + name, body, { access: "public", contentType: "application/json", addRandomSuffix: false, allowOverwrite: true, cacheControlMaxAge: 60 });
+}
+
+export async function readPointer<T>(name: string): Promise<T | null> {
+  if (!useBlob) {
+    const text = await fs.readFile(path.join(localDir, prefix, name), "utf8").catch(() => null);
+    return text ? JSON.parse(text) : null;
+  }
+  const r = await get(prefix + name, { access: "public", useCache: false });
+  if (!r || r.statusCode !== 200 || !r.stream) return null;
+  return JSON.parse(await new Response(r.stream).text());
+}
+
 export async function readLocalFile(pathname: string) {
   if (useBlob || process.env.VERCEL || !pathname.startsWith(prefix) || pathname.includes("..")) return null;
   return fs.readFile(path.join(localDir, pathname)).catch(() => null);

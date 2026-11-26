@@ -1,5 +1,6 @@
 import "server-only";
-import { listFiles, newFileName, readJSON, writeFile, type StoredFile } from "./store";
+import { createHmac } from "crypto";
+import { listFiles, newFileName, readJSON, readPointer, writeFile, writePointer, type StoredFile } from "./store";
 import { defaultContent, mergeContent, type Content, type Json } from "./paths";
 
 // published/  every version that went live (a restore is a new version)
@@ -22,7 +23,17 @@ export const ORIGINAL_ARCHIVE_NAME = "Original site, before the editor (25 Nov 2
 const nameOf = (f: StoredFile) => f.pathname.split("/").pop()!.replace(/\.json$/, "");
 const isFileOf = (f: StoredFile, id: string) => nameOf(f) === id || nameOf(f).startsWith(`${id}-`);
 
+// The pointer name carries a secret-derived part, so the current draft can't be
+// fetched by guessing its address.
+const pointerName = (folder: Folder) =>
+  `${folder}-current-${createHmac("sha256", process.env.EDITOR_SESSION_SECRET || "local").update(folder).digest("hex").slice(0, 24)}.json`;
+const hasPointer = (folder: Folder) => folder !== "archives";
+
 export async function latest(folder: Folder): Promise<VersionRecord | null> {
+  if (hasPointer(folder)) {
+    const current = await readPointer<VersionRecord>(pointerName(folder));
+    if (current) return current;
+  }
   const { files } = await listFiles(folder, 1);
   return files[0] ? readJSON<VersionRecord>(files[0]) : null;
 }
@@ -33,13 +44,17 @@ export async function listRecords(folder: Folder, limit = 50): Promise<VersionRe
 }
 
 export async function findRecord(folder: Folder, id: string): Promise<VersionRecord | null> {
-  let cursor: string | undefined;
-  do {
-    const page = await listFiles(folder, 1000, cursor);
-    const f = page.files.find((x) => isFileOf(x, id));
-    if (f) return readJSON<VersionRecord>(f);
-    cursor = page.cursor;
-  } while (cursor);
+  // a version saved a moment ago can take a few seconds to appear in Blob's listing
+  for (let attempt = 0; attempt < 4; attempt++) {
+    let cursor: string | undefined;
+    do {
+      const page = await listFiles(folder, 1000, cursor);
+      const f = page.files.find((x) => isFileOf(x, id));
+      if (f) return readJSON<VersionRecord>(f);
+      cursor = page.cursor;
+    } while (cursor);
+    if (attempt < 3) await new Promise((r) => setTimeout(r, 1500));
+  }
   return null;
 }
 
@@ -47,6 +62,7 @@ async function write(folder: Folder, rec: Omit<VersionRecord, "id" | "at">): Pro
   const name = newFileName(folder);
   const full = { ...rec, id: name.split("/").pop()!.replace(/\.json$/, ""), at: new Date().toISOString() };
   await writeFile(name, JSON.stringify(full), "application/json");
+  if (hasPointer(folder)) await writePointer(pointerName(folder), JSON.stringify(full));
   return full;
 }
 

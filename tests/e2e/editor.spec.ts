@@ -116,6 +116,30 @@ test("7: restore an older version → the site goes back", async ({ page }) => {
   expect(versions.length).toBeGreaterThanOrEqual(3); // nothing deleted; the restore is a new version
 });
 
+test("7b: undo the last publish in one click → the site goes back", async ({ page }) => {
+  await openEditor(page, "/security");
+  await editText(page, "Built for controlled finance AI workflows.", "Security heading to undo");
+  await publishAndWait(page);
+  const mistake = (await editorApi(page, "/api/editor/state")).json.liveId;
+  expect((await visitorText(page, "/security", mistake)).text).toContain("Security heading to undo");
+  await page.getByRole("button", { name: "History" }).click();
+  page.once("dialog", (d) => d.accept());
+  await page.getByRole("button", { name: "Undo this publish" }).click();
+  await expect(page.getByRole("status")).toHaveText("Live now ✓", { timeout: 60_000 });
+  await expect(page.frameLocator("iframe").locator("h1")).toHaveText("Built for controlled finance AI workflows.", { timeout: 15_000 });
+  const { liveId } = (await editorApi(page, "/api/editor/state")).json;
+  expect(liveId).not.toBe(mistake);
+  const visitor = (await visitorText(page, "/security", liveId)).text;
+  expect(visitor).toContain("Built for controlled finance AI workflows.");
+  expect(visitor).not.toContain("Security heading to undo");
+  // nothing deleted: the mistake stays in History, and the undo is a new version on top
+  const published = (await editorApi(page, "/api/editor/versions")).json.published;
+  expect(published[0]).toMatchObject({ id: liveId, name: "Undid the last publish" });
+  expect(published[1].id).toBe(mistake);
+  // an undo aimed at a version that is no longer the newest is refused, not applied
+  expect((await editorApi(page, "/api/editor/undo-publish", { id: mistake })).status).toBe(409);
+});
+
 test("8: archive the whole site → change three things → bring it back → matches exactly", async ({ page }) => {
   const pages = ["/", "/pricing", "/contact"];
   const before = await Promise.all(pages.map(async (p) => (await visitorText(page, p)).text));

@@ -322,6 +322,24 @@ export function EditorApp({ initial, startPath, startTab }: { initial: State; st
     [afterLive, flush, state.liveId],
   );
 
+  const undoPublish = useCallback(
+    async (v: VersionMeta) => {
+      const dropped = changes.length ? " Changes you haven't published yet will be dropped." : "";
+      if (!window.confirm(`Undo the publish of ${when(v.at)}? The website goes back to how it was just before.${dropped} Nothing is deleted: this version stays in History.`)) return;
+      await flush();
+      setStatus("Undoing…");
+      const r = await api<{ liveId: string }>("/api/editor/undo-publish", { method: "POST", body: JSON.stringify({ id: v.id }) });
+      if (!r.ok) {
+        setStatus("Nothing was undone.");
+        setVersions(null);
+        return setProblem(r.status === 409 ? "Someone else published in the meantime, so nothing was undone. History is now up to date: have a look, then try again." : r.data.error || "That didn't work. Please try again.");
+      }
+      setStatus("Undone. The website is going back to how it was.");
+      await afterLive(r.data.liveId);
+    },
+    [afterLive, changes.length, flush],
+  );
+
   const restore = useCallback(
     async (folder: "published" | "archives", v: VersionMeta) => {
       await flush();
@@ -644,7 +662,7 @@ export function EditorApp({ initial, startPath, startTab }: { initial: State; st
 
               {tab === "history" ? (
                 <section>
-                  <p className="mb-3 text-body-60">Every version that went live. Restoring one makes it your draft, so you can preview it before publishing.</p>
+                  <p className="mb-3 text-body-60">Every version that went live. Published something by mistake? Press <strong>Undo this publish</strong> on the top one and the website goes straight back. Restoring an older one makes it your draft, so you can preview it before publishing.</p>
                   {!versions ? <p>Loading…</p> : versions.published.length === 0 ? <p>Nothing has been published from the editor yet.</p> : null}
                   <ul className="flex flex-col gap-2">
                     {versions?.published.map((v, i) => (
@@ -656,11 +674,15 @@ export function EditorApp({ initial, startPath, startTab }: { initial: State; st
                         <p className="text-body-60">
                           {v.kind === "restore" ? (v.name ?? "Brought back") : "Published"} by {v.by}
                         </p>
-                        {i > 0 ? (
+                        {i === 0 ? (
+                          <button type="button" className="btn-ed mt-1" onClick={() => undoPublish(v)}>
+                            Undo this publish
+                          </button>
+                        ) : (
                           <button type="button" className="btn-ed mt-1" onClick={() => restore("published", v)}>
                             Restore as draft
                           </button>
-                        ) : null}
+                        )}
                       </li>
                     ))}
                   </ul>

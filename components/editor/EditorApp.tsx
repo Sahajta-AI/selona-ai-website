@@ -29,7 +29,14 @@ const short = (v: Json | undefined) => {
 const pageOfKey = (key: string) => Object.entries(PAGES).find(([, p]) => p.groups[0] === key.split(".")[0])?.[1].path ?? null;
 
 async function api<T>(path: string, init?: RequestInit): Promise<{ ok: true; data: T } | { ok: false; status: number; data: Record<string, string> }> {
-  const res = await fetch(path, { ...init, headers: init?.body instanceof FormData ? undefined : { "Content-Type": "application/json" }, cache: "no-store" });
+  // never leave a button "working" forever: give up after 30 seconds with a clear message
+  const res = await fetch(path, {
+    ...init,
+    headers: init?.body instanceof FormData ? undefined : { "Content-Type": "application/json" },
+    cache: "no-store",
+    signal: AbortSignal.timeout(30_000),
+  }).catch(() => null);
+  if (!res) return { ok: false, status: 0, data: { error: "The website didn't answer in time. Please check your internet connection and try again." } };
   const data = await res.json().catch(() => ({}));
   if (res.status === 401) window.location.href = "/editor/sign-in?e=expired";
   return res.ok ? { ok: true, data } : { ok: false, status: res.status, data };
@@ -76,6 +83,7 @@ export function EditorApp({ initial, startPath, startTab }: { initial: State; st
   const syncSteps = () => setCanStep({ undo: history.current.index > 0, redo: history.current.index < history.current.stack.length - 1 });
   const saveTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const saving = useRef<Promise<void>>(Promise.resolve());
+  const lastSaveOk = useRef(true);
   const draftIdRef = useRef(initial.draftId);
   const latestDraft = useRef(initial.draft);
   const reloadAfterSave = useRef(false);
@@ -94,6 +102,7 @@ export function EditorApp({ initial, startPath, startTab }: { initial: State; st
         method: "POST",
         body: JSON.stringify({ content: latestDraft.current, draftId: draftIdRef.current }),
       });
+      lastSaveOk.current = r.ok;
       if (r.ok) {
         draftIdRef.current = r.data.draftId;
         setState((s) => ({ ...s, draftId: r.data.draftId }));
@@ -103,8 +112,11 @@ export function EditorApp({ initial, startPath, startTab }: { initial: State; st
           reloadAfterSave.current = false;
           reloadFrame();
         }
-      } else if (r.status === 409) setConflict("draft");
-      else setProblem(r.data.error || "We couldn't save that just now. Please try again in a minute.");
+      } else {
+        setStatus("Not saved yet.");
+        if (r.status === 409) setConflict("draft");
+        else setProblem(r.data.error || "We couldn't save that just now. Please try again in a minute.");
+      }
     });
     return saving.current;
   }, [reloadFrame]);
@@ -258,9 +270,11 @@ export function EditorApp({ initial, startPath, startTab }: { initial: State; st
     async (force = false) => {
       setConflict(null);
       await flush();
+      if (!lastSaveOk.current) return setStatus("Not published: your last change couldn't be saved. See the message above.");
       setStatus("Publishing…");
       const r = await api<{ liveId: string }>("/api/editor/publish", { method: "POST", body: JSON.stringify({ liveId: state.liveId, force }) });
       if (!r.ok) {
+        setStatus("Not published yet.");
         if (r.status === 409) return setConflict("publish");
         return setProblem(r.data.error || "Publishing didn't work. Please try again.");
       }
@@ -278,6 +292,7 @@ export function EditorApp({ initial, startPath, startTab }: { initial: State; st
       setStatus("Bringing it back…");
       const r = await api<{ liveId: string }>("/api/editor/bring-back", { method: "POST", body: JSON.stringify({ id: v.id, liveId: state.liveId, force }) });
       if (!r.ok) {
+        setStatus("Not brought back yet.");
         if (r.status === 409) return setConflict({ bringBack: v });
         return setProblem(r.data.error || "That didn't work. Please try again.");
       }
@@ -448,7 +463,7 @@ export function EditorApp({ initial, startPath, startTab }: { initial: State; st
       </header>
 
       {problem ? (
-        <p role="alert" className="flex items-center justify-between gap-3 bg-amber-50 px-4 py-2 text-sm text-amber-800">
+        <p role="alert" className="flex items-center justify-between gap-3 border-b-4 border-red-300 bg-red-50 px-4 py-3 text-base text-red-900">
           {problem}
           <button type="button" onClick={() => setProblem("")} className="underline">
             OK
@@ -457,7 +472,7 @@ export function EditorApp({ initial, startPath, startTab }: { initial: State; st
       ) : null}
 
       {conflict ? (
-        <div role="alertdialog" aria-label="Someone else made changes" className="border-b border-amber-300 bg-amber-50 px-4 py-3 text-sm text-amber-900">
+        <div role="alertdialog" aria-label="Someone else made changes" className="border-b-4 border-amber-400 bg-amber-100 px-4 py-4 text-base text-amber-950 shadow-md">
           {conflict === "draft" ? (
             <>
               <p className="font-medium">Someone else changed this draft while you were editing.</p>

@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState, useSyncExternalStore } from "react";
 import {
   PAGES,
   describeKey,
@@ -76,6 +76,26 @@ export function EditorApp({ initial, startPath, startTab }: { initial: State; st
   const [versions, setVersions] = useState<{ published: VersionMeta[]; archives: VersionMeta[] } | null>(null);
   const [archiveName, setArchiveName] = useState("");
   const [liveCheck, setLiveCheck] = useState<null | "waiting" | "live" | "slow">(null);
+  // first-visit tip; remembered in this browser only (works without it too)
+  const tipSeen = useSyncExternalStore(
+    () => () => {},
+    () => {
+      try {
+        return localStorage.getItem("selona-editor-tip") === "seen";
+      } catch {
+        return false;
+      }
+    },
+    () => true, // on the server: no tip, so nothing flickers
+  );
+  const [tipDismissed, setTipDismissed] = useState(false);
+  const showHint = !tipSeen && !tipDismissed;
+  const dismissHint = () => {
+    setTipDismissed(true);
+    try {
+      localStorage.setItem("selona-editor-tip", "seen");
+    } catch {}
+  };
 
   const frame = useRef<HTMLIFrameElement>(null);
   const history = useRef<{ stack: Content[]; index: number; lastKey: string | null; lastAt: number }>({ stack: [initial.draft], index: 0, lastKey: null, lastAt: 0 });
@@ -403,17 +423,20 @@ export function EditorApp({ initial, startPath, startTab }: { initial: State; st
 
   return (
     <div className="flex h-screen flex-col">
-      <header className="flex flex-wrap items-center gap-2 border-b border-line bg-white px-3 py-2 text-sm">
-        <strong className="mr-2 text-ink-deep">Website editor</strong>
-        <label className="flex items-center gap-1">
-          <span className="sr-only">Page</span>
+      <header className="flex flex-wrap items-center gap-x-3 gap-y-2 border-b border-line bg-white px-4 py-2.5 shadow-[0_1px_0_rgba(13,22,48,0.04)]">
+        <div className="flex items-center gap-2 pr-1">
+          <img src="/brand/selona-logo-official.svg" alt="" className="h-5 w-auto" />
+          <span className="rounded-md bg-tint px-1.5 py-0.5 text-[11px] font-semibold uppercase tracking-wider text-action">Editor</span>
+        </div>
+        <label className="flex items-center gap-2 text-sm">
+          <span className="hidden text-body-60 lg:inline">Page</span>
           <select
             value={path}
             onChange={(e) => {
               setPath(e.target.value);
               setSelected(null);
             }}
-            className="min-h-[40px] rounded-lg border border-line bg-white px-2"
+            className="min-h-[38px] rounded-lg border border-line bg-white px-2.5 text-sm font-medium text-ink-deep shadow-sm focus:outline-none focus:ring-2 focus:ring-action/30"
           >
             {Object.values(PAGES).map((p) => (
               <option key={p.path} value={p.path}>
@@ -422,24 +445,15 @@ export function EditorApp({ initial, startPath, startTab }: { initial: State; st
             ))}
           </select>
         </label>
-        <button type="button" onClick={undo} disabled={!canStep.undo} className="btn-ed">
-          Undo
-        </button>
-        <button type="button" onClick={redo} disabled={!canStep.redo} className="btn-ed">
-          Redo
-        </button>
-        <button type="button" onClick={() => setMode(mode === "edit" ? "preview" : "edit")} className="btn-ed">
-          {mode === "edit" ? "Preview" : "Back to editing"}
-        </button>
-        <button
-          type="button"
-          onClick={() => publish(false)}
-          disabled={changes.length === 0 || liveCheck === "waiting"}
-          className="min-h-[40px] rounded-full bg-ink-deep px-4 font-medium text-white disabled:opacity-40"
-        >
-          Publish
-        </button>
-        <span role="status" aria-live="polite" className="min-w-0 flex-1 truncate text-body-60">
+        <div className="flex items-center gap-1" role="group" aria-label="Undo and redo">
+          <button type="button" onClick={undo} disabled={!canStep.undo} className="btn-ed" title="Undo (Ctrl+Z)">
+            <span aria-hidden="true">↶</span>Undo
+          </button>
+          <button type="button" onClick={redo} disabled={!canStep.redo} className="btn-ed" title="Redo (Ctrl+Shift+Z)">
+            <span aria-hidden="true">↷</span>Redo
+          </button>
+        </div>
+        <StatusBadge>
           {liveCheck === "waiting"
             ? "Putting it live… checking the website"
             : liveCheck === "live"
@@ -451,15 +465,33 @@ export function EditorApp({ initial, startPath, startTab }: { initial: State; st
                   : changes.length === 0 && status !== "Saving…"
                   ? "Everything is live."
                   : status}
-        </span>
-        <button type="button" onClick={() => setPanelOpen((o) => !o)} className="btn-ed md:hidden">
-          {panelOpen ? "Hide panel" : "Show panel"}
-        </button>
-        <form method="post" action="/api/editor/sign-out">
-          <button type="submit" className="btn-ed">
-            Sign out
+        </StatusBadge>
+        <div className="ml-auto flex items-center gap-2">
+          <button type="button" onClick={() => setMode(mode === "edit" ? "preview" : "edit")} className="btn-ed">
+            {mode === "edit" ? "Preview" : "Back to editing"}
           </button>
-        </form>
+          <button
+            type="button"
+            onClick={() => publish(false)}
+            disabled={changes.length === 0 || liveCheck === "waiting"}
+            className="btn-ed-primary"
+          >
+            Publish
+            {changes.length ? (
+              <span aria-hidden="true" className="rounded-full bg-white/20 px-1.5 text-xs">
+                {changes.length}
+              </span>
+            ) : null}
+          </button>
+          <button type="button" onClick={() => setPanelOpen((o) => !o)} className="btn-ed md:hidden">
+            {panelOpen ? "Hide panel" : "Show panel"}
+          </button>
+          <form method="post" action="/api/editor/sign-out">
+            <button type="submit" className="btn-ed-quiet" title={`Signed in as ${state.email}`}>
+              Sign out
+            </button>
+          </form>
+        </div>
       </header>
 
       {problem ? (
@@ -501,24 +533,41 @@ export function EditorApp({ initial, startPath, startTab }: { initial: State; st
         </div>
       ) : null}
 
-      <div className="flex min-h-0 flex-1 flex-col md:flex-row">
+      {showHint && mode === "edit" ? (
+        <div className="flex items-center justify-between gap-3 border-b border-line bg-tint/60 px-4 py-2 text-sm text-ink-deep">
+          <span>
+            <strong>Tip:</strong> click any words on the page to change them, or a picture to replace it. Nothing goes live until you press <strong>Publish</strong>.
+          </span>
+          <button type="button" className="btn-ed-quiet" onClick={dismissHint}>
+            Got it
+          </button>
+        </div>
+      ) : null}
+
+      <div className="flex min-h-0 flex-1 flex-col bg-mist md:flex-row">
         <iframe
           ref={frame}
           key={`${path}-${frameNonce}`}
           title="Your website, ready to edit"
           src={`/api/editor/enter?path=${encodeURIComponent(path)}&n=${frameNonce}`}
-          className="min-h-[60vh] w-full flex-1 border-0 bg-white"
+          className="min-h-[60vh] w-full flex-1 border-0 bg-white md:m-3 md:rounded-xl md:shadow-[0_8px_30px_rgba(13,22,48,0.08)]"
         />
         {panelOpen && mode === "edit" ? (
-          <aside className="flex max-h-[50vh] w-full flex-col border-t border-line bg-white md:max-h-none md:w-[380px] md:border-l md:border-t-0">
-            <nav className="flex flex-wrap gap-1 border-b border-line p-2 text-sm" aria-label="Editor panels">
+          <aside className="flex max-h-[50vh] w-full flex-col border-t border-line bg-white md:max-h-none md:w-[400px] md:border-l md:border-t-0">
+            <nav className="flex gap-1 border-b border-line px-3 pt-2 text-sm" aria-label="Editor panels">
               {tabs.map(([t, label]) => (
-                <button key={t} type="button" onClick={() => setTab(t)} aria-pressed={tab === t} className={`rounded-full px-3 py-1.5 ${tab === t ? "bg-ink-deep text-white" : "hover:bg-tint"}`}>
+                <button
+                  key={t}
+                  type="button"
+                  onClick={() => setTab(t)}
+                  aria-pressed={tab === t}
+                  className={`-mb-px border-b-2 px-2.5 pb-2 pt-1.5 font-medium transition-colors ${tab === t ? "border-action text-ink-deep" : "border-transparent text-body-60 hover:text-ink-deep"}`}
+                >
                   {label}
                 </button>
               ))}
             </nav>
-            <div className="flex-1 overflow-y-auto p-3 text-sm">
+            <div className="flex-1 overflow-y-auto p-4 text-[15px] leading-6">
               {tab === "changes" ? (
                 <ChangesPanel changes={changes} onUndo={(c) => apply(setAt(latestDraft.current, c.key, (c.before ?? "") as Json), { structural: c.kind !== "text" })} onGo={(c) => {
                   const p = pageOfKey(c.key);
@@ -529,8 +578,8 @@ export function EditorApp({ initial, startPath, startTab }: { initial: State; st
               {tab === "page" ? (
                 <div className="flex flex-col gap-4">
                   {selected ? (
-                    <section className="rounded-lg border border-line p-3">
-                      <p className="font-medium text-ink-deep">Selected</p>
+                    <section className="rounded-xl border-2 border-action/30 bg-tint/40 p-3">
+                      <p className="text-xs font-semibold uppercase tracking-wider text-action">Selected</p>
                       <p className="text-body-60">{describeKey(selected)}</p>
                       {listsFor(selected).map(({ list, index, length }) => (
                         <div key={list} className="mt-2 flex flex-wrap items-center gap-1">
@@ -553,14 +602,18 @@ export function EditorApp({ initial, startPath, startTab }: { initial: State; st
                       ))}
                     </section>
                   ) : (
-                    <p className="text-body-60">Click any text on the page to change it. Click a picture to replace it.</p>
+                    <p className="rounded-xl border border-dashed border-line p-4 text-center text-body-60">
+                      Click any text on the page to change it.
+                      <br />
+                      Click a picture to replace it.
+                    </p>
                   )}
 
                   <section>
-                    <h2 className="mb-2 font-medium text-ink-deep">Pictures and videos</h2>
+                    <h2 className="mb-2 text-xs font-semibold uppercase tracking-wider text-body-60">Pictures and videos</h2>
                     <ul className="flex flex-col gap-2">
                       {media.map(([k, v]) => (
-                        <li key={k} className="flex items-center gap-2">
+                        <li key={k} className="flex items-center gap-3 rounded-xl border border-line p-2">
                           {isVideoKey(k) ? <span className="w-16 text-center text-xs text-body-60">Video</span> : <img src={String(v)} alt="" className="h-10 w-16 rounded border border-line object-contain" />}
                           <span className="min-w-0 flex-1 truncate">{describeKey(k)}</span>
                           <button type="button" className="btn-ed" onClick={() => chooseMedia(k)}>
@@ -572,7 +625,7 @@ export function EditorApp({ initial, startPath, startTab }: { initial: State; st
                   </section>
 
                   <section>
-                    <h2 className="mb-2 font-medium text-ink-deep">Words you can&apos;t click on</h2>
+                    <h2 className="mb-1 text-xs font-semibold uppercase tracking-wider text-body-60">Words you can&apos;t click on</h2>
                     <p className="mb-2 text-body-60">Page titles, messages and labels that only show sometimes.</p>
                     {hiddenTexts.map(([k, v]) => (
                       <label key={k} className="mb-2 flex flex-col gap-1">
@@ -581,7 +634,7 @@ export function EditorApp({ initial, startPath, startTab }: { initial: State; st
                           value={String(v)}
                           rows={String(v).length > 60 ? 3 : 1}
                           onChange={(e) => apply(setAt(latestDraft.current, k, e.target.value), { key: k })}
-                          className="rounded-lg border border-line px-2 py-1"
+                          className="rounded-lg border border-line px-2.5 py-1.5 focus:outline-none focus:ring-2 focus:ring-action/30"
                         />
                       </label>
                     ))}
@@ -595,7 +648,7 @@ export function EditorApp({ initial, startPath, startTab }: { initial: State; st
                   {!versions ? <p>Loading…</p> : versions.published.length === 0 ? <p>Nothing has been published from the editor yet.</p> : null}
                   <ul className="flex flex-col gap-2">
                     {versions?.published.map((v, i) => (
-                      <li key={v.id} className="rounded-lg border border-line p-2">
+                      <li key={v.id} className="rounded-xl border border-line p-3">
                         <p className="font-medium">
                           {when(v.at)}
                           {i === 0 ? " · live now" : ""}
@@ -620,7 +673,7 @@ export function EditorApp({ initial, startPath, startTab }: { initial: State; st
                   <div className="flex gap-2">
                     <label className="flex-1">
                       <span className="sr-only">Name for this version</span>
-                      <input value={archiveName} onChange={(e) => setArchiveName(e.target.value)} placeholder="For example: Before the March changes" className="min-h-[40px] w-full rounded-lg border border-line px-2" />
+                      <input value={archiveName} onChange={(e) => setArchiveName(e.target.value)} placeholder="For example: Before the March changes" className="min-h-[38px] w-full rounded-lg border border-line px-2.5 focus:outline-none focus:ring-2 focus:ring-action/30" />
                     </label>
                     <button type="button" className="btn-ed" disabled={!archiveName.trim()} onClick={saveArchive}>
                       Save
@@ -629,7 +682,7 @@ export function EditorApp({ initial, startPath, startTab }: { initial: State; st
                   {!versions ? <p>Loading…</p> : null}
                   <ul className="flex flex-col gap-2">
                     {versions?.archives.map((v) => (
-                      <li key={v.id} className="rounded-lg border border-line p-2">
+                      <li key={v.id} className="rounded-xl border border-line p-3">
                         <p className="font-medium">{v.name}</p>
                         <p className="text-body-60">
                           Saved {when(v.at)} by {v.by}
@@ -656,6 +709,24 @@ export function EditorApp({ initial, startPath, startTab }: { initial: State; st
   );
 }
 
+/** The status line as a coloured badge: green when live, amber when not live yet, blue while working. */
+function StatusBadge({ children }: { children: string }) {
+  const text = children || "";
+  const tone = /Live now|Everything is live|Saved\. You can bring/.test(text)
+    ? "border-emerald-200 bg-emerald-50 text-emerald-800"
+    : /Saving|Publishing|Putting it live|Uploading|Bringing/.test(text)
+      ? "border-sky-200 bg-sky-50 text-sky-800"
+      : /Not |couldn't|didn't|longer than usual/.test(text)
+        ? "border-red-200 bg-red-50 text-red-800"
+        : "border-amber-200 bg-amber-50 text-amber-900";
+  return (
+    <span role="status" aria-live="polite" className={`inline-flex min-w-0 max-w-full items-center gap-2 truncate rounded-full border px-3 py-1 text-sm font-medium ${tone}`}>
+      <span aria-hidden="true" className="h-2 w-2 shrink-0 rounded-full bg-current opacity-70" />
+      <span className="truncate">{text}</span>
+    </span>
+  );
+}
+
 function ChangesPanel({ changes, onUndo, onGo }: { changes: Change[]; onUndo: (c: Change) => void; onGo: (c: Change) => void }) {
   if (!changes.length) return <p className="text-body-60">No changes yet. Everything you see is what&apos;s live on the website.</p>;
   return (
@@ -663,7 +734,7 @@ function ChangesPanel({ changes, onUndo, onGo }: { changes: Change[]; onUndo: (c
       <p className="mb-3 text-body-60">These changes are saved but not live yet. Press Publish to put them on the website.</p>
       <ul className="flex flex-col gap-2">
         {changes.map((c) => (
-          <li key={c.key} className="rounded-lg border border-line p-2" data-change={c.key}>
+          <li key={c.key} className="rounded-xl border border-line p-3" data-change={c.key}>
             <button type="button" className="text-left font-medium text-ink-deep hover:underline" onClick={() => onGo(c)}>
               {describeKey(c.key)}
             </button>

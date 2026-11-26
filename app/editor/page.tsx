@@ -8,9 +8,16 @@ export default async function EditorHome({ searchParams }: { searchParams: Promi
   const email = await getEditor();
   if (!email) redirect("/editor/sign-in");
   const { path, review } = await searchParams;
-  try {
+  const loaded = await (async () => {
     await ensureOriginalArchive();
     const [draft, live] = await Promise.all([getDraft(), latest("published")]);
+    return { draft, live };
+  })().catch((err: Error) => {
+    console.error("Editor could not load:", err.message);
+    return null;
+  });
+  if (loaded) {
+    const { draft, live } = loaded;
     const startPath = Object.values(PAGES).some((p) => p.path === path) ? path! : "/";
     return (
       <EditorApp
@@ -19,8 +26,8 @@ export default async function EditorHome({ searchParams }: { searchParams: Promi
         startTab={review ? "changes" : "page"}
       />
     );
-  } catch (err) {
-    console.error("Editor could not load:", (err as Error).message);
+  }
+  {
     return (
       <main className="mx-auto flex min-h-screen max-w-md flex-col justify-center gap-4 px-6">
         <h1 className="type-h2 text-ink-deep">The editor can&apos;t open right now</h1>

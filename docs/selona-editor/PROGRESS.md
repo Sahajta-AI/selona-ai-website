@@ -32,3 +32,5 @@ One line per finished or blocked task: `<IST time> <task-id> <done|BLOCKED>: <on
 2026-11-26 09:19 IST T27 done: MCP server at /api/mcp/<token> (Streamable HTTP, stateless) with 7 plain-described tools; none can publish.
 2026-11-26 09:19 IST T28 done: private per-person connector address, hashed in EDITOR_CONNECTOR_TOKENS (Preview, Sensitive), revocable.
 2026-11-26 09:19 IST T29 done: changing tools return /editor?review=1 links showing old vs new with Undo and Publish; proof 9 green locally with the MCP SDK client.
+2026-11-26 09:25 IST T30 done: full suite 43/43 green on a local production build (proofs 1–10; Blob on Preview BLOCKED, see ASSUMPTIONS). Output in test-output/.
+2026-11-26 09:25 IST T31 done: npm run build exit 0; eslint 0 errors (3 warnings: plain <img> thumbnails in the editor panel).

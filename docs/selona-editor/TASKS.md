@@ -51,8 +51,8 @@ In order. Each points to its part of `BRIEF.md` ("§" = section heading) and say
 
 ## Proof (end-to-end tests on the preview)
 
-- [ ] T30 E2E tests 1–10 from §How you prove it works, run against the branch preview. Done when all pass (or each failure is fixed or marked BLOCKED with the reason; no test weakened).
-- [ ] T31 `npm run build` and lint pass with no errors (proof 11).
+- [x] T30 E2E tests 1–10 from §How you prove it works, run against the branch preview. Done when all pass (or each failure is fixed or marked BLOCKED with the reason; no test weakened).
+- [x] T31 `npm run build` and lint pass with no errors (proof 11).
 
 ## Self-audit
 

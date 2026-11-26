@@ -72,7 +72,8 @@ export function EditorApp({ initial, startPath, startTab }: { initial: State; st
 
   const frame = useRef<HTMLIFrameElement>(null);
   const history = useRef<{ stack: Content[]; index: number; lastKey: string | null; lastAt: number }>({ stack: [initial.draft], index: 0, lastKey: null, lastAt: 0 });
-  const [, bump] = useState(0);
+  const [canStep, setCanStep] = useState({ undo: false, redo: false });
+  const syncSteps = () => setCanStep({ undo: history.current.index > 0, redo: history.current.index < history.current.stack.length - 1 });
   const saveTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const saving = useRef<Promise<void>>(Promise.resolve());
   const draftIdRef = useRef(initial.draftId);
@@ -129,7 +130,7 @@ export function EditorApp({ initial, startPath, startTab }: { initial: State; st
   /** Every change goes through here: undo history, the draft, the page. */
   const apply = useCallback(
     (next: Content, opts: { key?: string; structural?: boolean } = {}) => {
-      const h = history.current;
+          const h = history.current;
       const typingSameField = opts.key && h.lastKey === opts.key && Date.now() - h.lastAt < 1500 && h.index === h.stack.length - 1;
       if (typingSameField) h.stack[h.index] = next;
       else {
@@ -143,7 +144,7 @@ export function EditorApp({ initial, startPath, startTab }: { initial: State; st
       if (opts.structural) reloadAfterSave.current = true;
       setLiveCheck(null);
       setNotice("");
-      bump((n) => n + 1);
+      syncSteps();
       scheduleSave();
     },
     [scheduleSave],
@@ -162,7 +163,7 @@ export function EditorApp({ initial, startPath, startTab }: { initial: State; st
       const diff = diffContent(from, next);
       if (diff.every((c) => c.kind === "text")) diff.forEach((c) => toPage({ type: "set", key: c.key, value: c.after }));
       else reloadAfterSave.current = true;
-      bump((n) => n + 1);
+      syncSteps();
       scheduleSave();
     },
     [scheduleSave, toPage],
@@ -244,6 +245,7 @@ export function EditorApp({ initial, startPath, startTab }: { initial: State; st
         draftIdRef.current = s.data.draftId;
         latestDraft.current = s.data.draft;
         history.current = { stack: [s.data.draft], index: 0, lastKey: null, lastAt: 0 };
+        setCanStep({ undo: false, redo: false });
       }
       setVersions(null);
       reloadFrame();
@@ -376,7 +378,6 @@ export function EditorApp({ initial, startPath, startTab }: { initial: State; st
   const pageKeys = flatten(draft).filter(([k]) => pageEntry[1].groups.includes(k.split(".")[0]));
   const hiddenTexts = pageKeys.filter(([k, v]) => typeof v === "string" && isTextKey(k) && !visibleKeys.includes(k) && !/Alt$/.test(k));
   const media = pageKeys.filter(([k]) => isMediaKey(k));
-  const h = history.current;
 
   const tabs: [Tab, string][] = [
     ["changes", `Changes${changes.length ? ` (${changes.length})` : ""}`],
@@ -406,10 +407,10 @@ export function EditorApp({ initial, startPath, startTab }: { initial: State; st
             ))}
           </select>
         </label>
-        <button type="button" onClick={undo} disabled={h.index === 0} className="btn-ed">
+        <button type="button" onClick={undo} disabled={!canStep.undo} className="btn-ed">
           Undo
         </button>
-        <button type="button" onClick={redo} disabled={h.index >= h.stack.length - 1} className="btn-ed">
+        <button type="button" onClick={redo} disabled={!canStep.redo} className="btn-ed">
           Redo
         </button>
         <button type="button" onClick={() => setMode(mode === "edit" ? "preview" : "edit")} className="btn-ed">

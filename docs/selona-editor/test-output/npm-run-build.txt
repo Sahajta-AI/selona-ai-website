@@ -1,0 +1,5 @@
+✓ Compiled successfully in 5.2s
+  Finished TypeScript in 3.8s ...
+Route (app)                      Revalidate  Expire
+○  (Static)   prerendered as static content
+ƒ  (Dynamic)  server-rendered on demand

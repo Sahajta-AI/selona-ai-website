@@ -20,7 +20,7 @@
 
 **If someone else changed it too**, you'll see a yellow message. Choose **See their version first** if you're unsure.
 
-**History.** The **History** tab shows every version that went live, with the date, time and who published it. **Restore as draft** brings an old version back so you can look at it, then press Publish.
+**History.** The **History** tab shows every version that went live, with the date, time and who published it. **Restore as draft** brings an old version back so you can look at it, then press Publish. Published something by mistake? Press **Undo this publish** on the top entry: the website goes straight back to how it was just before, in one click.
 
 **Saved versions.** In **Saved versions**, type a name (for example "Before the investor round") and press **Save**. This keeps a copy of the whole website. **Bring back this version** puts it all back in one step. "Original site, before the editor (25 Nov 2026)" is always there. Nothing is ever deleted.
 

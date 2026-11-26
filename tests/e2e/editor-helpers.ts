@@ -10,6 +10,7 @@ export const EDITOR_API_ROUTES: [string, string][] = [
   ["POST", "/api/editor/restore"],
   ["POST", "/api/editor/archive"],
   ["POST", "/api/editor/bring-back"],
+  ["POST", "/api/editor/undo-publish"],
   ["POST", "/api/editor/upload"],
 ];
 

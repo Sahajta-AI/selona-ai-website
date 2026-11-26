@@ -61,7 +61,7 @@ BUILT = done and tested. PARTIAL = done but not fully proven where the brief wan
 | Item | Status |
 |---|---|
 | MORNING.md, RAHUL-GUIDE.md, TUTORIAL.md, REPORT.md | BUILT |
-| Pull request into main | BUILT (open, not merged) |
+| Pull request into main | BLOCKED: the new repo has no `main` (creating it was refused as a push to main). MORNING.md step 1 creates it and opens the PR |
 
 ## Gaps found and what happened to them
 - G1 Preview content store not connected → BLOCKED (owner, two clicks; MORNING.md step 2).

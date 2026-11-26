@@ -80,9 +80,12 @@ Run them yourself: `BASE_URL=<site> npx playwright test` (see `tests/README.md`;
 - "Add another" on a list copies the neighbouring item, including its small decorative card style (colour), which can't be edited.
 - The night lost about 10 hours to worker restarts (no work between ~23:30 and 09:15 IST). Every task was still finished or marked BLOCKED.
 - The old repo `pranamyajainn/selona-website` has the branch only up to T13 (an in-between state); ignore it. The new repo also has `add-ponytail-skills`, which isn't part of this work.
+- After a worker restart, the last commits (T29 onwards) were first pushed to the old repo's feature branch by mistake (the remote had been reset); they are now in the new repo too, and the old repo's `main` is untouched.
 - Vercel isn't connected to GitHub for this project, so merging won't deploy by itself (MORNING.md step 5).
 
 ## ASSUMPTIONS.md (in full)
+
+- 09:46 IST mistake, corrected: after a worker restart the `origin` remote of the working copy pointed back at `pranamyajainn/selona-website`, so commits 785358e…e7d435c (T29 to the final docs) were pushed to the **old** repo's feature branch before being pushed to `Sahajta-AI/selona-ai-website`. The old repo's `main` is untouched (506e2ae); its `feature/editor-and-connector` simply has the same commits. I misread that repo's `main` as the new repo's at 09:37; the new repo still has no `main`.
 
 One line each. Decided without anyone to ask; revisit in the morning if any is wrong.
 

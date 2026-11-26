@@ -68,7 +68,7 @@ In order. Each points to its part of `BRIEF.md` ("§" = section heading) and say
 - [x] T35 MORNING.md. §What I need in the morning. Done when it has the exact ordered steps: review PR, create Google OAuth client with exact redirect URIs, Production env var names, merge, check selona.ai, add the connector in claude.ai (URL and clicks), one-step rollback.
 - [x] T36 RAHUL-GUIDE.md. Done when it is one page, plain words, to "you", covering open, sign in, click and type, preview, publish, history, restore, archive, and Claude.
 - [x] T37 TUTORIAL.md. Done when it is a 3-minute walkthrough script for the 3 PM IST call.
-- [x] T38 Pull request from `feature/editor-and-connector` into `main`, not merged. Done when the PR exists.
+- [ ] T38 BLOCKED (the new repo has no `main`; pushing it was refused as a push to main; MORNING.md step 1 creates it and opens the PR): Pull request from `feature/editor-and-connector` into `main`, not merged. Done when the PR exists.
 - [x] T39 REPORT.md. Done when it covers what was built file by file, every test and result, ASSUMPTIONS.md in full, everything BLOCKED and why, and open doubts.
 
 ## BLOCKED (needs the owner)

@@ -56,16 +56,19 @@ In order. Each points to its part of `BRIEF.md` ("§" = section heading) and say
 
 ## Self-audit
 
-- [ ] T32 Self-audit: read BRIEF.md section by section against the real code, write STATUS.md (BUILT / PARTIAL / MISSING per bullet), and add a task below for every gap. Done when STATUS.md exists and every gap has a task.
-- [ ] T33 Close the gaps found in T32 (tasks added under this line).
+- [x] T32 Self-audit: read BRIEF.md section by section against the real code, write STATUS.md (BUILT / PARTIAL / MISSING per bullet), and add a task below for every gap. Done when STATUS.md exists and every gap has a task.
+- [x] T33 Close the gaps found in T32 (tasks added under this line).
+  - G1 BLOCKED: connect the Blob store to Preview/Production (owner; connecting adds a Production variable, which tonight's rules forbid). MORNING.md step 2.
+  - G2 BLOCKED: pull request needs a `main` branch in Sahajta-AI/selona-ai-website; creating it was refused as a push to main. MORNING.md step 1.
+  - G3 noted: 390px screenshots on the Vercel Sandbox differ by font rendering; `BASELINE_DIR` lets a same-machine baseline be used.
 
 ## Wrap-up
 
 - [ ] T34 Reset and check. Proof 12. Done when preview content is back to the "Original site" archive, the parity test is green on the preview, `main` is still at 506e2ae and production is still dpl_9UFr6DteNbfALPrPJGe2vij3Jmtt with no Production env var changes.
-- [ ] T35 MORNING.md. §What I need in the morning. Done when it has the exact ordered steps: review PR, create Google OAuth client with exact redirect URIs, Production env var names, merge, check selona.ai, add the connector in claude.ai (URL and clicks), one-step rollback.
-- [ ] T36 RAHUL-GUIDE.md. Done when it is one page, plain words, to "you", covering open, sign in, click and type, preview, publish, history, restore, archive, and Claude.
-- [ ] T37 TUTORIAL.md. Done when it is a 3-minute walkthrough script for the 3 PM IST call.
-- [ ] T38 Pull request from `feature/editor-and-connector` into `main`, not merged. Done when the PR exists.
+- [x] T35 MORNING.md. §What I need in the morning. Done when it has the exact ordered steps: review PR, create Google OAuth client with exact redirect URIs, Production env var names, merge, check selona.ai, add the connector in claude.ai (URL and clicks), one-step rollback.
+- [x] T36 RAHUL-GUIDE.md. Done when it is one page, plain words, to "you", covering open, sign in, click and type, preview, publish, history, restore, archive, and Claude.
+- [x] T37 TUTORIAL.md. Done when it is a 3-minute walkthrough script for the 3 PM IST call.
+- [ ] T38 BLOCKED (no `main` in the new repo; MORNING.md step 1 creates it and opens the PR with one command): Pull request from `feature/editor-and-connector` into `main`, not merged. Done when the PR exists.
 - [ ] T39 REPORT.md. Done when it covers what was built file by file, every test and result, ASSUMPTIONS.md in full, everything BLOCKED and why, and open doubts.
 
 ## BLOCKED (needs the owner)

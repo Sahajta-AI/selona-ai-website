@@ -4,27 +4,9 @@ Do these in order. Nothing below has been done to production yet: production is 
 
 **Repo:** all work is on branch `feature/editor-and-connector` in **Sahajta-AI/selona-ai-website** (as you asked last night). The old repo `pranamyajainn/selona-website` has a copy only up to T13; ignore it.
 
-## 1. Create `main` in the new repo, then open the pull request (5 min)
+## 1. Review the pull request (15 min)
 
-The new repo was empty and my push of `main` was refused (tonight's rule: never push to main). `main` must be exactly the commit production was built from:
-
-```bash
-git clone https://github.com/Sahajta-AI/selona-ai-website && cd selona-ai-website
-```
-
-```bash
-git push origin 506e2ae2e4198ee511092a8e8116354cd3534619:refs/heads/main
-```
-
-```bash
-gh repo edit Sahajta-AI/selona-ai-website --default-branch main
-```
-
-```bash
-gh pr create --repo Sahajta-AI/selona-ai-website --base main --head feature/editor-and-connector --title "Website editor and Claude connector" --body-file docs/selona-editor/REPORT.md
-```
-
-Then review the PR. Start with `docs/selona-editor/REPORT.md` and `STATUS.md`.
+`main` in the new repo is exactly 506e2ae, the commit production was built from (checked at 09:37 IST). The pull request from `feature/editor-and-connector` into `main` is open; its link is at the top of the night's final message. Start with `docs/selona-editor/REPORT.md` and `STATUS.md`. Don't merge until steps 2–4 are done.
 
 ## 2. Connect the content store (2 min, needed for Preview and Production)
 

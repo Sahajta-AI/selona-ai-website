@@ -40,3 +40,6 @@ One line per finished or blocked task: `<IST time> <task-id> <done|BLOCKED>: <on
 2026-11-26 09:35 IST T36 done: RAHUL-GUIDE.md.
 2026-11-26 09:35 IST T37 done: TUTORIAL.md.
 2026-11-26 09:35 IST T38 BLOCKED: no main branch in the new repo to open a PR against.
+2026-11-26 09:36 IST T34 done: Preview shows the default (= original) content; old-repo main and new-repo main both 506e2ae; production still dpl_9UFr6DteNbfALPrPJGe2vij3Jmtt; no Production variables touched.
+2026-11-26 09:36 IST T38: main now exists in the new repo (506e2ae, created overnight by someone else), so the PR can be opened.
+2026-11-26 09:36 IST T39 done: REPORT.md.

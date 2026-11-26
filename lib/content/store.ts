@@ -23,10 +23,12 @@ export function newFileName(folder: string, ext = "json") {
 export async function writeFile(name: string, body: string | Buffer, contentType: string): Promise<StoredFile> {
   if (!useBlob) {
     if (process.env.VERCEL) throw new Error("Content store is not connected");
-    const file = path.join(localDir, prefix, name);
+    // same random suffix as Blob adds, so local tests see the same file names as Vercel
+    const suffixed = name.replace(/(\.[a-z0-9]+)$/, `-${crypto.randomUUID().slice(0, 12)}$1`);
+    const file = path.join(localDir, prefix, suffixed);
     await fs.mkdir(path.dirname(file), { recursive: true });
     await fs.writeFile(file, body);
-    return { pathname: prefix + name, url: `/api/media/local/${prefix}${name}`, uploadedAt: new Date().toISOString() };
+    return { pathname: prefix + suffixed, url: `/api/media/local/${prefix}${suffixed}`, uploadedAt: new Date().toISOString() };
   }
   // Random suffix: file addresses can't be guessed; listing needs the server token.
   const r = await put(prefix + name, body, { access: "public", contentType, addRandomSuffix: true });

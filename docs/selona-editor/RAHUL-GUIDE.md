@@ -1,8 +1,8 @@
 # Changing the Selona website yourself
 
-**Open the editor.** Go to **selona.ai/editor** on your laptop. Bookmark it. It isn't linked from the website.
+**Open the editor.** For now, while you try it out, go to **selona-ai-website.vercel.app/editor** (a private copy of your website; changes there don't touch selona.ai). Once you're happy, the same editor moves to **selona.ai/editor**. Bookmark it. It isn't linked from the website.
 
-**Sign in.** Press **Sign in with Google** and choose rahul@selona.ai. You stay signed in for 8 hours.
+**Sign in.** Type your email (rahul@selona.ai) and the personal access key Pranamya sent you, then press **Sign in**. (Later you'll simply press **Sign in with Google**.) You stay signed in for 8 hours.
 
 **Change words.** You see your real website. Click any words and type. Press Enter or click somewhere else when you're done. Numbers are just words too: change "10" to "12" the same way. Use the menu at the top left to go to another page (Pricing, Contact and so on).
 

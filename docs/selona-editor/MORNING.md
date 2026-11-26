@@ -1,87 +1,48 @@
-# Morning steps for Pranamya
+# Next steps for Pranamya
 
-Do these in order. Nothing below has been done to production yet: production is still `dpl_9UFr6DteNbfALPrPJGe2vij3Jmtt` (main at 506e2ae) and no Production environment variable was touched.
+## Where things are (26 Nov)
 
-**Repo:** all work is on branch `feature/editor-and-connector` in **Sahajta-AI/selona-ai-website** (as you asked last night). The old repo `pranamyajainn/selona-website` has a copy only up to T13; ignore it.
+- **Code:** `main` of **Sahajta-AI/selona-ai-website** holds the whole editor and Claude connector (your decision: no separate branch, no pull request). The July repo `pranamyajainn/selona-website` and the live **selona.ai** are untouched; production there is still `dpl_9UFr6DteNbfALPrPJGe2vij3Jmtt`.
+- **Test site for Mr Rahul:** **https://selona-ai-website.vercel.app**, Vercel project `selona-ai-website`. It's connected to the repo (every push to `main` redeploys it) and has its own content store, `selona-ai-website-content`.
+- **Sign-in on the test site:** personal access keys (Google isn't set up yet). The keys and the private Claude connector addresses for Mr Rahul and you are in `.env.editor-keys.local`, in the section "NEW TEST PROJECT", in this session's working copy. That file is gitignored and never committed, so copy them somewhere safe and send Mr Rahul only his own.
 
-## 1. Create `main` in the new repo, then open the pull request (5 min)
+## 1. Share the test site with Mr Rahul
 
-The new repo has only `feature/editor-and-connector`. My push of `main` was refused (tonight's rule: never push to main). `main` must be exactly the commit production was built from:
+Send him:
+- the link **https://selona-ai-website.vercel.app/editor**;
+- his email `rahul@selona.ai` and **his** access key (privately, e.g. in a password manager share);
+- `RAHUL-GUIDE.md`.
 
-```bash
-git clone https://github.com/Sahajta-AI/selona-ai-website && cd selona-ai-website
-```
+Anything he publishes there only changes the test site. selona.ai doesn't move.
 
-```bash
-git push origin 506e2ae2e4198ee511092a8e8116354cd3534619:refs/heads/main
-```
+## 2. (Optional, before or after he tests) Google sign-in
 
-```bash
-gh repo edit Sahajta-AI/selona-ai-website --default-branch main
-```
+Google Cloud Console → APIs & Services → OAuth consent screen: External, app "Selona website editor", scopes `openid`, `email`. Then Credentials → Create OAuth client ID → Web application:
+- **Authorised JavaScript origins:** `https://selona-ai-website.vercel.app` (and later `https://selona.ai`, `https://www.selona.ai`)
+- **Authorised redirect URIs:** `https://selona-ai-website.vercel.app/api/editor/google/callback` (and later `https://selona.ai/api/editor/google/callback`, `https://www.selona.ai/api/editor/google/callback`)
 
-```bash
-gh pr create --repo Sahajta-AI/selona-ai-website --base main --head feature/editor-and-connector --title "Website editor and Claude connector" --body-file docs/selona-editor/REPORT.md
-```
+In Vercel → `selona-ai-website` → Settings → Environment Variables, add `GOOGLE_CLIENT_ID` and `GOOGLE_CLIENT_SECRET` (mark the secret **Sensitive**) for Production and Preview, then redeploy. The "Sign in with Google" button appears by itself.
 
-Then review the PR. Start with `docs/selona-editor/REPORT.md` and `STATUS.md`. Don't merge until steps 2–4 are done.
+## 3. Add the connector in claude.ai (each person, their own account)
 
-## 2. Connect the content store (2 min, needed for Preview and Production)
+claude.ai → **Settings → Connectors → Add custom connector** → Name `Selona website` → URL: your private connector address from `.env.editor-keys.local` → **Add**. In a chat, switch it on from the tools menu and try "Show me the pages of the Selona website".
 
-Vercel → team **Sahajta AI** → **Storage** → **selona-content** → **Connect Project** → project **selona** → tick **Preview** and **Production** (Development optional) → **Connect**.
+## 4. When Mr Rahul is happy: move selona.ai to the new project
 
-This adds `BLOB_READ_WRITE_TOKEN`. I couldn't do it for Preview alone. Then, in **selona → Settings → Environment Variables**, delete:
-- the empty Preview `BLOB_READ_WRITE_TOKEN` whose comment says "EMPTY PLACEHOLDER" (keep the one the connection just made);
-- optional tidy-up: the project **selona-editor-store** and its store **selona-editor-content** (empty leftovers from a failed attempt).
+1. In Vercel → `selona-ai-website` → **Settings → Domains**, add `selona.ai` and `www.selona.ai`. Vercel moves them from the old `selona` project (it asks you to confirm).
+2. Switch off the backup key sign-in once Google works: delete `EDITOR_ACCESS_KEYS_ENABLED` (and `EDITOR_ACCESS_KEY_HASHES`) from the project, then redeploy.
+3. Check https://selona.ai reads exactly as before, then open https://selona.ai/editor.
+4. Update the connector address in claude.ai to `https://selona.ai/api/mcp/<your token>` (same token).
 
-## 3. Create the Google sign-in client (10 min)
-
-Google Cloud Console → APIs & Services → **OAuth consent screen**: External, app name "Selona website editor", scopes `openid`, `email`. Then **Credentials → Create credentials → OAuth client ID → Web application**:
-
-- **Authorised JavaScript origins:** `https://selona.ai`, `https://www.selona.ai`, `https://selona-git-feature-editor-and-connector-sahajta-projects.vercel.app`
-- **Authorised redirect URIs:**
-  - `https://selona.ai/api/editor/google/callback`
-  - `https://www.selona.ai/api/editor/google/callback`
-  - `https://selona-git-feature-editor-and-connector-sahajta-projects.vercel.app/api/editor/google/callback`
-
-Copy the client ID and secret into step 4.
-
-## 4. Set Production environment variables (names only; mark every secret Sensitive)
-
-In **selona → Settings → Environment Variables**, target **Production**:
-
-| Name | Value | Sensitive |
-|---|---|---|
-| `EDITOR_ALLOWED_EMAILS` | `rahul@selona.ai,pranamya@sahajta.com,pranamyajeet@gmail.com` | no |
-| `EDITOR_SESSION_SECRET` | a new random value, at least 32 characters (`openssl rand -base64 48`) | **yes** |
-| `GOOGLE_CLIENT_ID` | from step 3 | no |
-| `GOOGLE_CLIENT_SECRET` | from step 3 | **yes** |
-| `EDITOR_CONNECTOR_TOKENS` | `email:sha256(token)` pairs, see below | **yes** |
-| `BLOB_READ_WRITE_TOKEN` | added by step 2 | yes (automatic) |
-| `EDITOR_ACCESS_KEYS_ENABLED` | leave **unset** (backup sign-in stays off in production) | – |
-| `EDITOR_ACCESS_KEY_HASHES` | only if you switch the backup on | **yes** |
-
-Connector tokens for production: make one per person and put only the hash in Vercel:
-
-```bash
-T=$(openssl rand -base64 32 | tr '+/' '-_' | tr -d '='); echo "token: $T"; echo -n "$T" | shasum -a 256
-```
-
-Value format: `rahul@selona.ai:<hash>,pranamya@sahajta.com:<hash>`. Each person's connector URL is `https://selona.ai/api/mcp/<their token>`.
-
-**Preview keys and connector URLs** made last night are in `.env.editor-keys.local` in the night session's working copy (gitignored, never committed). They work only on the Preview.
-
-## 5. Merge and check selona.ai
-
-1. Merge the PR. Vercel isn't connected to GitHub for this project, so deploy production yourself the way you did in July (from `main`, e.g. `vercel --prod` in the repo), or connect the repo to the project in Vercel first.
-2. Open https://selona.ai: it must read exactly as before (production's store starts empty, so the site shows the repo default, which is today's site).
-3. Open https://selona.ai/editor → Sign in with Google → check that it opens. The first visit creates the saved version "Original site, before the editor (25 Nov 2026)".
-
-## 6. Add the connector in claude.ai (Mr Rahul and you, each on your own account)
-
-claude.ai → **Settings → Connectors → Add custom connector** → Name: `Selona website` → URL: `https://selona.ai/api/mcp/<your token>` → **Add**. In a chat, turn on the connector from the tools menu and try "Show me the pages of the Selona website".
+The content on the test site carries over, because the same project and store keep serving. If you'd rather start clean, bring back "Original site, before the editor (25 Nov 2026)" in Saved versions first.
 
 ## Roll back in one step
 
 - **Wrong words on the site:** /editor → **Saved versions** → "Original site, before the editor (25 Nov 2026)" → **Bring back this version**.
-- **The new code itself misbehaves:** Vercel → selona → Deployments → `dpl_9UFr6DteNbfALPrPJGe2vij3Jmtt` → **Instant Rollback** (Promote). That is the July production build.
+- **After moving the domain, if anything is wrong:** Vercel → `selona-ai-website` → Settings → Domains → remove `selona.ai`/`www.selona.ai`, then add them back on the old `selona` project, whose production is still `dpl_9UFr6DteNbfALPrPJGe2vij3Jmtt`.
+
+## Tidy-up (any time)
+
+On the **old** `selona` project, delete the Preview-only variables from the night (`BLOB_STORE_ID`, the empty `BLOB_READ_WRITE_TOKEN`, `EDITOR_*`), plus the leftover project `selona-editor-store` and stores `selona-content` and `selona-editor-content`. The old repo's `feature/editor-and-connector` and `add-ponytail-skills` branches can go too. Nothing uses any of them.
+
+In GitHub → Sahajta-AI/selona-ai-website → Settings → **Default branch**, switch to `main`, and delete `feature/editor-and-connector` (it's the same as `main`).

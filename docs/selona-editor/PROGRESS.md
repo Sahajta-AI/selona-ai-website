@@ -45,3 +45,4 @@ One line per finished or blocked task: `<IST time> <task-id> <done|BLOCKED>: <on
 2026-11-26 09:36 IST T39 done: REPORT.md.
 2026-11-26 09:37 IST T38 BLOCKED: correction: the new repo has no main (the main seen at 09:37 was the old repo's, because a restart had reset the remote). Remote fixed; branch pushed to Sahajta-AI/selona-ai-website.
 2026-11-26 10:08 IST Time limit (10:00 IST) reached: building stopped. REPORT.md and MORNING.md describe what works and what is BLOCKED. Last Preview: dpl_HbzMdVq57Yw2DfymrLzYL7jgEt8S (READY, commit fbce91a).
+2026-11-26 11:05 IST Bug found by the first test run on the real Vercel Blob store: saved versions couldn't be found by id because Blob adds a random suffix to file names. Fixed the lookup; the local disk store now adds the same suffix so local tests match Vercel. Local: 16/16 store tests green.

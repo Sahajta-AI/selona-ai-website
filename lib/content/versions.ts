@@ -18,7 +18,9 @@ export type VersionRecord = {
 export const ORIGINAL_ID = "original";
 export const ORIGINAL_ARCHIVE_NAME = "Original site, before the editor (25 Nov 2026)";
 
-const idOf = (f: StoredFile) => f.pathname.split("/").pop()!.replace(/\.json$/, "");
+// Blob adds a random suffix to each file name ("<id>-<suffix>.json"), so match on the id prefix.
+const nameOf = (f: StoredFile) => f.pathname.split("/").pop()!.replace(/\.json$/, "");
+const isFileOf = (f: StoredFile, id: string) => nameOf(f) === id || nameOf(f).startsWith(`${id}-`);
 
 export async function latest(folder: Folder): Promise<VersionRecord | null> {
   const { files } = await listFiles(folder, 1);
@@ -34,7 +36,7 @@ export async function findRecord(folder: Folder, id: string): Promise<VersionRec
   let cursor: string | undefined;
   do {
     const page = await listFiles(folder, 1000, cursor);
-    const f = page.files.find((x) => idOf(x) === id);
+    const f = page.files.find((x) => isFileOf(x, id));
     if (f) return readJSON<VersionRecord>(f);
     cursor = page.cursor;
   } while (cursor);

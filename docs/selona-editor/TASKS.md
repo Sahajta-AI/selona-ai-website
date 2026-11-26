@@ -58,8 +58,8 @@ In order. Each points to its part of `BRIEF.md` ("§" = section heading) and say
 
 - [x] T32 Self-audit: read BRIEF.md section by section against the real code, write STATUS.md (BUILT / PARTIAL / MISSING per bullet), and add a task below for every gap. Done when STATUS.md exists and every gap has a task.
 - [x] T33 Close the gaps found in T32 (tasks added under this line).
-  - G1 BLOCKED: connect the Blob store to Preview/Production (owner; connecting adds a Production variable, which tonight's rules forbid). MORNING.md step 2.
-  - G2 BLOCKED: pull request needs a `main` branch in Sahajta-AI/selona-ai-website; creating it was refused as a push to main. MORNING.md step 1.
+  - G1 resolved 26 Nov: new test project `selona-ai-website` with its own connected Blob store; full suite run there.
+  - G2 resolved 26 Nov: Pranamya chose `main` directly (no PR).
   - G3 noted: 390px screenshots on the Vercel Sandbox differ by font rendering; `BASELINE_DIR` lets a same-machine baseline be used.
 
 ## Wrap-up
@@ -68,10 +68,17 @@ In order. Each points to its part of `BRIEF.md` ("§" = section heading) and say
 - [x] T35 MORNING.md. §What I need in the morning. Done when it has the exact ordered steps: review PR, create Google OAuth client with exact redirect URIs, Production env var names, merge, check selona.ai, add the connector in claude.ai (URL and clicks), one-step rollback.
 - [x] T36 RAHUL-GUIDE.md. Done when it is one page, plain words, to "you", covering open, sign in, click and type, preview, publish, history, restore, archive, and Claude.
 - [x] T37 TUTORIAL.md. Done when it is a 3-minute walkthrough script for the 3 PM IST call.
-- [ ] T38 BLOCKED (the new repo has no `main`; pushing it was refused as a push to main; MORNING.md step 1 creates it and opens the PR): Pull request from `feature/editor-and-connector` into `main`, not merged. Done when the PR exists.
+- [x] T38 (changed by Pranamya on 26 Nov: no PR; the work is on `main` of the new repo and deployed as a separate Vercel project for testing) Pull request from `feature/editor-and-connector` into `main`, not merged. Done when the PR exists.
 - [x] T39 REPORT.md. Done when it covers what was built file by file, every test and result, ASSUMPTIONS.md in full, everything BLOCKED and why, and open doubts.
 
 ## BLOCKED (needs the owner)
 
 - B1 BLOCKED: Google OAuth client. Only the owner can create it in Google Cloud; sign-in is built to switch on once its env vars exist (see T16, MORNING.md).
 - B2 BLOCKED: Adding the connector in claude.ai. Only Mr Rahul / the owner can add a custom connector to their own Claude account (steps in MORNING.md).
+
+## After the call was moved (26 Nov)
+
+- [x] T40 Put all work on `main` in Sahajta-AI/selona-ai-website (Pranamya's decision).
+- [x] T41 New Vercel project `selona-ai-website` from that repo, its own Blob store, sign-in settings; deployed at https://selona-ai-website.vercel.app.
+- [ ] T42 Full end-to-end suite against https://selona-ai-website.vercel.app from a Vercel Sandbox; content back to the original; temporary test accounts removed.
+- [ ] T43 Update MORNING.md, REPORT.md, STATUS.md, RAHUL-GUIDE.md for the test site.

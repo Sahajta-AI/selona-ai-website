@@ -271,9 +271,12 @@ export function EditorApp({ initial, startPath, startTab }: { initial: State; st
       setConflict(null);
       await flush();
       if (!lastSaveOk.current) return setStatus("Not published: your last change couldn't be saved. See the message above.");
+      setLiveCheck("waiting"); // never leave an earlier "Live now ✓" on screen while this one is on its way
+      setNotice("");
       setStatus("Publishing…");
       const r = await api<{ liveId: string }>("/api/editor/publish", { method: "POST", body: JSON.stringify({ liveId: state.liveId, force }) });
       if (!r.ok) {
+        setLiveCheck(null);
         setStatus("Not published yet.");
         if (r.status === 409) return setConflict("publish");
         return setProblem(r.data.error || "Publishing didn't work. Please try again.");
@@ -289,9 +292,12 @@ export function EditorApp({ initial, startPath, startTab }: { initial: State; st
       setConflict(null);
       if (!force && !window.confirm(`Put “${v.name}” live again? It replaces what's on the website now. You can always bring today's version back from History.`)) return;
       await flush();
+      setLiveCheck("waiting");
+      setNotice("");
       setStatus("Bringing it back…");
       const r = await api<{ liveId: string }>("/api/editor/bring-back", { method: "POST", body: JSON.stringify({ id: v.id, liveId: state.liveId, force }) });
       if (!r.ok) {
+        setLiveCheck(null);
         setStatus("Not brought back yet.");
         if (r.status === 409) return setConflict({ bringBack: v });
         return setProblem(r.data.error || "That didn't work. Please try again.");
@@ -307,9 +313,12 @@ export function EditorApp({ initial, startPath, startTab }: { initial: State; st
       const dropped = changes.length ? " Changes you haven't published yet will be dropped." : "";
       if (!window.confirm(`Undo the publish of ${when(v.at)}? The website goes back to how it was just before.${dropped} Nothing is deleted: this version stays in History.`)) return;
       await flush();
+      setLiveCheck("waiting");
+      setNotice("");
       setStatus("Undoing…");
       const r = await api<{ liveId: string }>("/api/editor/undo-publish", { method: "POST", body: JSON.stringify({ id: v.id }) });
       if (!r.ok) {
+        setLiveCheck(null);
         setStatus("Nothing was undone.");
         setVersions(null);
         return setProblem(r.status === 409 ? "Someone else published in the meantime, so nothing was undone. History is now up to date: have a look, then try again." : r.data.error || "That didn't work. Please try again.");

@@ -123,9 +123,19 @@ test("7b: undo the last publish in one click → the site goes back", async ({ p
   const mistake = (await editorApi(page, "/api/editor/state")).json.liveId;
   expect((await visitorText(page, "/security", mistake)).text).toContain("Security heading to undo");
   await page.getByRole("button", { name: "History" }).click();
+  // hold the undo on its way, to check the editor doesn't keep showing the earlier "Live now ✓" meanwhile
+  let release!: () => void;
+  const held = new Promise<void>((r) => (release = r));
+  await page.route("**/api/editor/undo-publish", async (route) => {
+    await held;
+    await route.continue();
+  });
   page.once("dialog", (d) => d.accept());
   await page.getByRole("button", { name: "Undo this publish" }).click();
+  await expect(page.getByRole("status")).not.toHaveText("Live now ✓");
+  release();
   await expect(page.getByRole("status")).toHaveText("Live now ✓", { timeout: 60_000 });
+  await page.unroute("**/api/editor/undo-publish");
   await expect(page.frameLocator("iframe").locator("h1")).toHaveText("Built for controlled finance AI workflows.", { timeout: 15_000 });
   const { liveId } = (await editorApi(page, "/api/editor/state")).json;
   expect(liveId).not.toBe(mistake);

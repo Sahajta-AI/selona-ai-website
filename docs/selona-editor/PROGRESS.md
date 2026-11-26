@@ -44,3 +44,4 @@ One line per finished or blocked task: `<IST time> <task-id> <done|BLOCKED>: <on
 2026-11-26 09:36 IST T38: main now exists in the new repo (506e2ae, created overnight by someone else), so the PR can be opened.
 2026-11-26 09:36 IST T39 done: REPORT.md.
 2026-11-26 09:37 IST T38 BLOCKED: correction: the new repo has no main (the main seen at 09:37 was the old repo's, because a restart had reset the remote). Remote fixed; branch pushed to Sahajta-AI/selona-ai-website.
+2026-11-26 10:08 IST Time limit (10:00 IST) reached: building stopped. REPORT.md and MORNING.md describe what works and what is BLOCKED. Last Preview: dpl_HbzMdVq57Yw2DfymrLzYL7jgEt8S (READY, commit fbce91a).

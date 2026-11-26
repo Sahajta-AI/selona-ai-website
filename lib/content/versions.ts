@@ -1,6 +1,5 @@
 import "server-only";
-import { createHmac } from "crypto";
-import { listFiles, newFileName, readJSON, readPointer, writeFile, writePointer, type StoredFile } from "./store";
+import { listFiles, newFileName, readJSON, writeFile, type StoredFile } from "./store";
 import { defaultContent, mergeContent, type Content, type Json } from "./paths";
 
 // published/  every version that went live (a restore is a new version)
@@ -23,17 +22,7 @@ export const ORIGINAL_ARCHIVE_NAME = "Original site, before the editor (25 Nov 2
 const nameOf = (f: StoredFile) => f.pathname.split("/").pop()!.replace(/\.json$/, "");
 const isFileOf = (f: StoredFile, id: string) => nameOf(f) === id || nameOf(f).startsWith(`${id}-`);
 
-// The pointer name carries a secret-derived part, so the current draft can't be
-// fetched by guessing its address.
-const pointerName = (folder: Folder) =>
-  `${folder}-current-${createHmac("sha256", process.env.EDITOR_SESSION_SECRET || "local").update(folder).digest("hex").slice(0, 24)}.json`;
-const hasPointer = (folder: Folder) => folder !== "archives";
-
 export async function latest(folder: Folder): Promise<VersionRecord | null> {
-  if (hasPointer(folder)) {
-    const current = await readPointer<VersionRecord>(pointerName(folder));
-    if (current) return current;
-  }
   const { files } = await listFiles(folder, 1);
   return files[0] ? readJSON<VersionRecord>(files[0]) : null;
 }
@@ -62,8 +51,21 @@ async function write(folder: Folder, rec: Omit<VersionRecord, "id" | "at">): Pro
   const name = newFileName(folder);
   const full = { ...rec, id: name.split("/").pop()!.replace(/\.json$/, ""), at: new Date().toISOString() };
   await writeFile(name, JSON.stringify(full), "application/json");
-  if (hasPointer(folder)) await writePointer(pointerName(folder), JSON.stringify(full));
+  await waitUntilNewest(folder, full.id);
   return full;
+}
+
+// Blob's listing can take a moment to show a new file. Each save waits until its
+// file shows up in the listing, so every read after it (pages rebuilt after
+// Publish, the review link, the conflict check) sees the new version.
+async function waitUntilNewest(folder: Folder, id: string) {
+  for (let i = 0; i < 40; i++) {
+    // among the newest few: someone else may have saved right after us
+    const { files } = await listFiles(folder, 5);
+    if (files.some((f) => isFileOf(f, id))) return;
+    await new Promise((r) => setTimeout(r, 250));
+  }
+  throw new Error(`The new ${folder} file didn't appear in the store in time`);
 }
 
 export const asContent = (c: unknown) => mergeContent(defaultContent as Json, c as Json) as Content;

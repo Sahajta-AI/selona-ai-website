@@ -29,3 +29,6 @@ One line per finished or blocked task: `<IST time> <task-id> <done|BLOCKED>: <on
 2026-11-25 23:27 IST T25 done: History with date/time/who; Restore as draft; restores are new versions; nothing deleted (proof 7).
 (T17–T26 share one editor component and one in-page script, so they were built and committed together in one commit, "T17-T26".)
 2026-11-25 23:27 IST T26 done: Saved versions: name + save the live site, bring back in one step, original archive seeded automatically (proof 8). Full suite 42/42 + editor 7/7 green on local production build.
+2026-11-26 09:19 IST T27 done: MCP server at /api/mcp/<token> (Streamable HTTP, stateless) with 7 plain-described tools; none can publish.
+2026-11-26 09:19 IST T28 done: private per-person connector address, hashed in EDITOR_CONNECTOR_TOKENS (Preview, Sensitive), revocable.
+2026-11-26 09:19 IST T29 done: changing tools return /editor?review=1 links showing old vs new with Undo and Publish; proof 9 green locally with the MCP SDK client.

@@ -45,9 +45,9 @@ In order. Each points to its part of `BRIEF.md` ("§" = section heading) and say
 
 ## The Claude connector (MCP)
 
-- [ ] T27 MCP server at /api/mcp (Streamable HTTP). §The Claude connector. Done when the tools exist with plain descriptions: list pages and sections; read a page's text; find a phrase; propose text changes; propose list add/remove/reorder; show history; prepare a restore. None can publish.
-- [ ] T28 Connector access. §The Claude connector (who can use it). Done when only the allowed people can use it, by OAuth tied to the editor sign-in if fully testable tonight, otherwise private per-person URLs revocable by env var; the choice is written in ASSUMPTIONS.md.
-- [ ] T29 Review link. §The Claude connector. Done when every changing tool returns a link that opens the editor showing old vs new for each change, with Undo per change and Publish.
+- [x] T27 MCP server at /api/mcp (Streamable HTTP). §The Claude connector. Done when the tools exist with plain descriptions: list pages and sections; read a page's text; find a phrase; propose text changes; propose list add/remove/reorder; show history; prepare a restore. None can publish.
+- [x] T28 Connector access. §The Claude connector (who can use it). Done when only the allowed people can use it, by OAuth tied to the editor sign-in if fully testable tonight, otherwise private per-person URLs revocable by env var; the choice is written in ASSUMPTIONS.md.
+- [x] T29 Review link. §The Claude connector. Done when every changing tool returns a link that opens the editor showing old vs new for each change, with Undo per change and Publish.
 
 ## Proof (end-to-end tests on the preview)
 

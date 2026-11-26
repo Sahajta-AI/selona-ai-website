@@ -1,0 +1,12 @@
+End-to-end suite against https://selona-ai-website.vercel.app (Vercel project selona-ai-website,
+commit 851194f), run from a Vercel Sandbox (iad1) on 26 Nov 2026 with two temporary test accounts
+(removed afterwards). Screenshot baseline captured on the same machine from live selona.ai (506e2ae);
+before that, the live selona.ai text was checked against the committed baseline: same on all 7 pages.
+
+  live selona.ai text same as baseline: 404, apply-now, contact, home, pricing, privacy, security
+  43 passed (5.1m)
+  suite-exit=0
+
+Earlier runs on the same site found two real bugs, both fixed before this run:
+- run 1 (9373ba1): 35 passed, 2 failed — saved versions not found by id on Vercel Blob (random file-name suffix). Fixed in 215ccd3.
+- run 2 (215ccd3): 41 passed, 1 failed, 1 skipped — after "Bring back", a page rebuilt too soon could show the previous version (Blob listing lag). Fixed in 851194f (after a first attempt, c59f56a, that didn't hold).

@@ -1,5 +1,13 @@
 # Report: Selona website editor and Claude connector
 
+## Update, 26 Nov (afternoon)
+
+- **Where it is now:** all work is on `main` of **Sahajta-AI/selona-ai-website** (Pranamya's decision: no branch, no pull request), deployed as its own Vercel project **selona-ai-website** at **https://selona-ai-website.vercel.app**, with its own Blob content store. selona.ai and the July repo/project are untouched (production still `dpl_9UFr6DteNbfALPrPJGe2vij3Jmtt`).
+- **Tests on the real site:** the full suite passed there, **43/43** (`test-output/test-site-selona-ai-website.txt`). Getting there found and fixed two bugs that only show on real Vercel Blob: (1) saved versions couldn't be found by id because Blob adds a random suffix to file names; (2) Blob's listing can lag a moment behind a write, so a page rebuilt right after Publish could show the previous version. Now every save waits until its file is listed. The local disk store mimics Blob's suffix so local tests catch the first kind of problem.
+- **Pranamya's first try** also found: Publish could look stuck on "Publishing…" (the screen didn't show the outcome) and the connector address opened in Chrome showed a raw error. Fixed: every action ends with a clear status, requests give up after 30 seconds with a message, a failed save stops Publish, warnings are larger, and the connector address opened in a browser explains itself in plain words.
+- **Open:** Pranamya finds the editor's look poor; a redesign of the editor screen (not the site) waits on her specifics. Google sign-in client and the connector in claude.ai are still hers to do (MORNING.md).
+
+
 Branch `feature/editor-and-connector` in **Sahajta-AI/selona-ai-website** (moved there at 22:58 IST on Pranamya's request). Built overnight 25–26 Nov 2026 from `BRIEF.md`. Production is untouched: it is still `dpl_9UFr6DteNbfALPrPJGe2vij3Jmtt`, `main` is still 506e2ae in both repos, and no Production environment variable was created or changed.
 
 Read first: `STATUS.md` (the brief, bullet by bullet), then `MORNING.md` (your steps).

@@ -80,5 +80,5 @@ In order. Each points to its part of `BRIEF.md` ("§" = section heading) and say
 
 - [x] T40 Put all work on `main` in Sahajta-AI/selona-ai-website (Pranamya's decision).
 - [x] T41 New Vercel project `selona-ai-website` from that repo, its own Blob store, sign-in settings; deployed at https://selona-ai-website.vercel.app.
-- [ ] T42 Full end-to-end suite against https://selona-ai-website.vercel.app from a Vercel Sandbox; content back to the original; temporary test accounts removed.
-- [ ] T43 Update MORNING.md, REPORT.md, STATUS.md, RAHUL-GUIDE.md for the test site.
+- [x] T42 Full end-to-end suite against https://selona-ai-website.vercel.app from a Vercel Sandbox: 43/43 passed (commit 851194f); content back to the original (the suite ends by bringing it back, and the parity tests then read the original text); temporary test accounts removed.
+- [x] T43 Update MORNING.md, REPORT.md, STATUS.md, RAHUL-GUIDE.md for the test site.

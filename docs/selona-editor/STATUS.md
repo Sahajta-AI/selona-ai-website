@@ -1,4 +1,8 @@
-# Status: BRIEF.md against the real code (self-audit, 26 Nov 09:30 IST)
+# Status: BRIEF.md against the real code
+
+**Update 26 Nov (afternoon):** the work is on `main` of Sahajta-AI/selona-ai-website and runs as its own Vercel project at https://selona-ai-website.vercel.app with its own content store. The full end-to-end suite passed there, 43/43 (proofs 1–11), so every "PARTIAL … ran locally" row below is now proven on Vercel too. The pull request row no longer applies: Pranamya chose `main` directly. Still waiting on Pranamya: Google sign-in client, adding the connector in claude.ai, moving selona.ai over after Mr Rahul approves.
+
+## As of the self-audit (26 Nov 09:30 IST)
 
 BUILT = done and tested. PARTIAL = done but not fully proven where the brief wanted it. MISSING = not built.
 

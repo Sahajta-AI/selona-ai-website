@@ -2,6 +2,7 @@ import "server-only";
 import { cookies, headers } from "next/headers";
 import { createHash, createHmac, randomBytes, timingSafeEqual } from "crypto";
 import { listFiles, newFileName, writeFile } from "@/lib/content/store";
+import { listSetting } from "@/lib/list-setting";
 
 // Who may use the editor: EDITOR_ALLOWED_EMAILS (comma separated). Sessions are
 // signed with EDITOR_SESSION_SECRET and last 30 days, so people sign in once
@@ -77,13 +78,15 @@ export const accessKeysEnabled = () => process.env.EDITOR_ACCESS_KEYS_ENABLED ==
 export const hashKey = (key: string) => createHash("sha256").update(key.trim()).digest("hex");
 export const newAccessKey = () => randomBytes(32).toString("base64url");
 
-/** EDITOR_ACCESS_KEY_HASHES = "email:sha256hex,email:sha256hex" (only hashes are ever stored). */
+/** EDITOR_ACCESS_KEY_HASHES (and EDITOR_ACCESS_KEY_HASHES_<NAME>) = "email:sha256hex,…" (only hashes are ever stored). */
 export function checkAccessKey(email: string, key: string) {
-  const want = (process.env.EDITOR_ACCESS_KEY_HASHES || "")
-    .split(",")
-    .map((p) => p.trim().split(":"))
-    .find(([e]) => e?.toLowerCase() === email.trim().toLowerCase())?.[1];
-  return Boolean(want) && isAllowed(email) && safeEqual(hashKey(key), want!);
+  const who = email.trim().toLowerCase();
+  const got = hashKey(key);
+  const match = listSetting("EDITOR_ACCESS_KEY_HASHES").some((entry) => {
+    const [e, want] = entry.split(":");
+    return e?.toLowerCase() === who && Boolean(want) && safeEqual(got, want);
+  });
+  return match && isAllowed(email);
 }
 
 // Limited attempts: failed sign-ins are recorded in the store (shared by all

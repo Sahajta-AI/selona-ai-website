@@ -349,13 +349,42 @@ body {
   background: rgba(255, 255, 255, 0.14);
 }
 
-/* Editor buttons (only used on /editor) */
+/* Editor buttons (only used on /editor). In the components layer so utilities like md:hidden still win. */
+@layer components {
+.btn-ed,
+.btn-ed-primary,
+.btn-ed-quiet {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 38px;
+  border-radius: 10px;
+  padding: 0 0.8rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  white-space: nowrap;
+  gap: 0.35rem;
+  transition: background-color 0.15s, box-shadow 0.15s, opacity 0.15s;
+}
 .btn-ed {
-  min-height: 40px;
-  border-radius: 9999px;
   border: 1px solid var(--color-line, #e5e7eb);
   background: #fff;
-  padding: 0 0.85rem;
+  color: var(--color-ink-deep, #0d1630);
+  box-shadow: 0 1px 2px rgba(13, 22, 48, 0.05);
 }
 .btn-ed:hover:not(:disabled) { background: #f1f5f9; }
-.btn-ed:disabled { opacity: 0.4; }
+.btn-ed-primary {
+  background: var(--color-ink-deep, #0d1630);
+  color: #fff;
+  padding: 0 1.1rem;
+  box-shadow: 0 6px 16px rgba(13, 22, 48, 0.18);
+}
+.btn-ed-primary:hover:not(:disabled) { background: var(--color-action, #2563eb); }
+.btn-ed-quiet { color: var(--color-body-60, #475569); }
+.btn-ed-quiet:hover { background: #f1f5f9; }
+.btn-ed:disabled,
+.btn-ed-primary:disabled { opacity: 0.4; cursor: not-allowed; box-shadow: none; }
+.btn-ed:focus-visible,
+.btn-ed-primary:focus-visible,
+.btn-ed-quiet:focus-visible { outline: 2px solid var(--color-action, #2563eb); outline-offset: 2px; }
+}

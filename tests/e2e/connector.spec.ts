@@ -77,7 +77,10 @@ test("Claude connector: a change prepared while the editor is open isn't publish
   expect(visitor).not.toContain("Reviewed by the person");
 
   // after loading the new draft the change is shown for review, and can then be published
+  // "Load their version" reloads the editor: wait for the new page before using it
+  const reloaded = page.waitForEvent("load");
   await page.getByRole("button", { name: "Load their version" }).click();
+  await reloaded;
   await page.getByRole("button", { name: /^Changes/ }).click();
   await expect(page.locator('[data-change="pricing.tiers.0.cta"]')).toContainText("Unreviewed (via Claude)", { timeout: 30_000 });
   await bringBackOriginal(page);

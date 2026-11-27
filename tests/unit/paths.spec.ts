@@ -29,3 +29,26 @@ test("flatten and listKeys cover the whole content", () => {
   expect(flatten(defaultContent).length).toBeGreaterThan(400);
   expect(listKeys(defaultContent)).toContain("shared.faq.items");
 });
+
+test("findText ignores case, spacing, line breaks, curly quotes and dashes", async () => {
+  const { findText } = await import("@/lib/content/find");
+  const headline = defaultContent.home.hero.headline;
+  const typed = headline.toUpperCase().replace(/ /g, "\n  ");
+  const m = findText(defaultContent, typed);
+  expect(m[0]).toMatchObject({ key: "home.hero.headline", exact: true });
+});
+
+test("findText suggests the closest texts when words were misread", async () => {
+  const { findText } = await import("@/lib/content/find");
+  // a screenshot read with one word wrong and one missing
+  const words = defaultContent.home.hero.headline.split(" ");
+  const misread = [...words.slice(0, -2), "finanse", words[words.length - 1]].join(" ");
+  const m = findText(defaultContent, misread);
+  expect(m[0]).toMatchObject({ key: "home.hero.headline", exact: false });
+});
+
+test("listsIn finds every list on a page with its size", async () => {
+  const { listsIn } = await import("@/lib/content/find");
+  const lists = listsIn(defaultContent.home as unknown as Json, "home");
+  expect(lists).toContainEqual({ list: "home.useCases.items", items: defaultContent.home.useCases.items.length });
+});

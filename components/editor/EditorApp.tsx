@@ -16,8 +16,21 @@ import {
   type Json,
 } from "@/lib/content/paths";
 
-type State = { email: string; draft: Content; draftId: string | null; live: Content; liveId: string; liveAt: string | null; liveBy: string | null };
-type VersionMeta = { id: string; at: string; by: string; kind: string; name?: string };
+type State = { email: string; draft: Content; draftId: string | null; live: Content; liveId: string; liveAt: string | null; liveBy: string | null; draftClaude?: boolean };
+type VersionMeta = { id: string; at: string; by: string; kind: string; name?: string; claude?: boolean };
+
+// "rahul@selona.ai (via Claude)" → who did it, and whether it was done with Claude
+const VIA_CLAUDE = " (via Claude)";
+const whoDid = (by: string) => by.replace(VIA_CLAUDE, "");
+function ClaudeTag({ v }: { v: VersionMeta }) {
+  const done = v.by.endsWith(VIA_CLAUDE);
+  if (!done && !v.claude) return null;
+  return (
+    <span className="mt-1 inline-flex items-center gap-1 rounded-full bg-violet-100 px-2 py-0.5 text-xs font-medium text-violet-800" data-claude>
+      {done ? "Done with Claude" : "Includes changes made with Claude"}
+    </span>
+  );
+}
 type Tab = "changes" | "page" | "history" | "archive";
 
 const when = (iso: string) =>
@@ -597,7 +610,7 @@ export function EditorApp({ initial, startPath, startTab }: { initial: State; st
             </nav>
             <div className="flex-1 overflow-y-auto p-4 text-[15px] leading-6">
               {tab === "changes" ? (
-                <ChangesPanel changes={changes} onUndo={(c) => apply(setAt(latestDraft.current, c.key, (c.before ?? "") as Json), { structural: c.kind !== "text" })} onGo={(c) => {
+                <ChangesPanel changes={changes} claude={Boolean(state.draftClaude)} onUndo={(c) => apply(setAt(latestDraft.current, c.key, (c.before ?? "") as Json), { structural: c.kind !== "text" })} onGo={(c) => {
                   const p = pageOfKey(c.key);
                   if (p && p !== path) setPath(p);
                 }} />
@@ -682,8 +695,10 @@ export function EditorApp({ initial, startPath, startTab }: { initial: State; st
                           {i === 0 ? " · live now" : ""}
                         </p>
                         <p className="text-body-60">
-                          {v.kind === "restore" ? (v.name ?? "Brought back") : "Published"} by {v.by}
+                          {v.kind === "restore" ? (v.name ?? "Brought back") : "Published"} by {whoDid(v.by)}
+                          {v.kind !== "restore" && v.name ? ` · “${v.name}”` : ""}
                         </p>
+                        <ClaudeTag v={v} />
                         {i === 0 ? (
                           <button type="button" className="btn-ed mt-1" onClick={() => undoPublish(v)}>
                             Undo this publish
@@ -717,8 +732,9 @@ export function EditorApp({ initial, startPath, startTab }: { initial: State; st
                       <li key={v.id} className="rounded-xl border border-line p-3">
                         <p className="font-medium">{v.name}</p>
                         <p className="text-body-60">
-                          Saved {when(v.at)} by {v.by}
+                          Saved {when(v.at)} by {whoDid(v.by)}
                         </p>
+                        <ClaudeTag v={v} />
                         <div className="mt-1 flex gap-1">
                           <button type="button" className="btn-ed" onClick={() => bringBack(v)}>
                             Bring back this version
@@ -759,11 +775,16 @@ function StatusBadge({ children }: { children: string }) {
   );
 }
 
-function ChangesPanel({ changes, onUndo, onGo }: { changes: Change[]; onUndo: (c: Change) => void; onGo: (c: Change) => void }) {
+function ChangesPanel({ changes, claude, onUndo, onGo }: { changes: Change[]; claude: boolean; onUndo: (c: Change) => void; onGo: (c: Change) => void }) {
   if (!changes.length) return <p className="text-body-60">No changes yet. Everything you see is what&apos;s live on the website.</p>;
   return (
     <section>
-      <p className="mb-3 text-body-60">These changes are saved but not live yet. Press Publish to put them on the website.</p>
+      <p className="mb-3 text-body-60">These changes are saved but not live yet. Press Publish to put them on the website, or ask Claude to publish them.</p>
+      {claude ? (
+        <p className="mb-3 inline-flex rounded-full bg-violet-100 px-2 py-0.5 text-xs font-medium text-violet-800" data-claude>
+          Includes changes made with Claude
+        </p>
+      ) : null}
       <ul className="flex flex-col gap-2">
         {changes.map((c) => (
           <li key={c.key} className="rounded-xl border border-line p-3" data-change={c.key}>

@@ -4,10 +4,14 @@ import { createHash, createHmac, randomBytes, timingSafeEqual } from "crypto";
 import { listFiles, newFileName, writeFile } from "@/lib/content/store";
 
 // Who may use the editor: EDITOR_ALLOWED_EMAILS (comma separated). Sessions are
-// signed with EDITOR_SESSION_SECRET and last 8 hours. Removing an email from the
-// list ends that person's access at once, even with a session cookie.
+// signed with EDITOR_SESSION_SECRET and last 30 days, so people sign in once
+// (owner's decision, 27 Nov). Removing an email from the list ends that person's
+// access at once, even with a session cookie; changing EDITOR_SESSION_SECRET signs
+// everyone out.
 export const SESSION_COOKIE = "selona_editor";
-const SESSION_HOURS = 8;
+const SESSION_HOURS = 30 * 24;
+// Review links from the Claude connector sign the person in for this long.
+const LINK_HOURS = 24;
 
 export const allowedEmails = () =>
   (process.env.EDITOR_ALLOWED_EMAILS || "").split(",").map((e) => e.trim().toLowerCase()).filter(Boolean);
@@ -27,17 +31,28 @@ export function makeSessionValue(email: string) {
   return `${body}.${sign(body)}`;
 }
 
-export function readSessionValue(value: string | undefined): string | null {
+// A signed value carries a purpose ("p"), so a review-link ticket can never be
+// used as a session cookie, or the other way round.
+function readSigned(value: string | undefined, purpose: string | undefined): string | null {
   if (!value || secret().length < 32) return null;
   const [body, mac] = value.split(".");
   if (!body || !mac || !safeEqual(mac, sign(body))) return null;
   try {
-    const { email, exp } = JSON.parse(Buffer.from(body, "base64url").toString());
-    return typeof email === "string" && exp > Date.now() && isAllowed(email) ? email : null;
+    const { email, exp, p } = JSON.parse(Buffer.from(body, "base64url").toString());
+    return p === purpose && typeof email === "string" && exp > Date.now() && isAllowed(email) ? email : null;
   } catch {
     return null;
   }
 }
+
+export const readSessionValue = (value: string | undefined) => readSigned(value, undefined);
+
+/** A ticket inside a review link from Claude: opens the editor signed in as that person, for 24 hours. */
+export function makeLinkTicket(email: string) {
+  const body = b64(JSON.stringify({ email: email.toLowerCase(), exp: Date.now() + LINK_HOURS * 3600_000, p: "link" }));
+  return `${body}.${sign(body)}`;
+}
+export const readLinkTicket = (value: string | undefined | null) => readSigned(value ?? undefined, "link");
 
 /** The signed-in editor's email, or null. Checked on the server for every editor page and API call. */
 export async function getEditor(): Promise<string | null> {

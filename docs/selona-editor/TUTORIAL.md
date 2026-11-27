@@ -14,6 +14,6 @@ Before the call: Rahul has the test-site link, his access key and his connector 
 
 **2:10 – Safety net (30 s).** **Saved versions**: "Original site, before the editor (25 Nov 2026)" is always there; **Bring back this version** restores everything in one step. **History** shows who published what and when. Bring back the original now so the demo change is undone.
 
-**2:40 – From Claude (20 s).** In Claude, with the Selona connector on: "Change the pricing page button 'Discuss a pilot' to 'Start a pilot'." Claude replies with a link; open it, see old vs new, press Publish (or Undo). "Claude can only prepare; you always press Publish."
+**2:40 – From Claude (20 s).** In Claude, with the Selona connector on: "Change the pricing page button 'Discuss a pilot' to 'Start a pilot'." Claude replies with a preview link; open it (it signs you in), see old vs new. Back in Claude: "Looks good, publish it." Show History: the entry says "Done with Claude". "Claude always shows you first and publishes only when you say so."
 
 **3:00 – Done.** Leave him RAHUL-GUIDE.md (one page).

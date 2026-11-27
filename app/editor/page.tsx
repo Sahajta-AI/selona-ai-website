@@ -6,8 +6,12 @@ import { EditorApp } from "@/components/editor/EditorApp";
 
 export default async function EditorHome({ searchParams }: { searchParams: Promise<{ path?: string; review?: string }> }) {
   const email = await getEditor();
-  if (!email) redirect("/editor/sign-in");
   const { path, review } = await searchParams;
+  // after signing in, come back to the same page and review
+  if (!email) {
+    const back = new URLSearchParams({ ...(review ? { review } : {}), ...(path ? { path } : {}) }).toString();
+    redirect(back ? `/editor/sign-in?next=${encodeURIComponent(`/editor?${back}`)}` : "/editor/sign-in");
+  }
   const loaded = await (async () => {
     await ensureOriginalArchive();
     const [draft, live] = await Promise.all([getDraft(), latest("published")]);
@@ -21,7 +25,7 @@ export default async function EditorHome({ searchParams }: { searchParams: Promi
     const startPath = Object.values(PAGES).some((p) => p.path === path) ? path! : "/";
     return (
       <EditorApp
-        initial={{ email, draft: draft.content, draftId: draft.id, live: draft.live, liveId: draft.liveId, liveAt: live?.at ?? null, liveBy: live?.by ?? null }}
+        initial={{ email, draft: draft.content, draftId: draft.id, live: draft.live, liveId: draft.liveId, liveAt: live?.at ?? null, liveBy: live?.by ?? null, draftClaude: draft.claude }}
         startPath={startPath}
         startTab={review ? "changes" : "page"}
       />

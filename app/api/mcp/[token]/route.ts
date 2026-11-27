@@ -3,6 +3,8 @@ import { buildConnector, connectorUser } from "@/lib/connector";
 
 // Remote MCP server (Streamable HTTP) for Claude: /api/mcp/<private token>.
 // Stateless: every request is answered on its own, which suits serverless.
+// Saving waits until the store lists the new version, which can take a few seconds.
+export const maxDuration = 60;
 async function handle(req: Request, { params }: { params: Promise<{ token: string }> }) {
   const email = connectorUser((await params).token);
   // Someone opened the address in a web browser: explain it in plain words.
@@ -23,7 +25,7 @@ function browserPage(valid: boolean) {
     ? `<h1>This address works ✓</h1>
        <p>It's your private connector for editing the Selona website from Claude. It isn't a web page, so there's nothing more to see here.</p>
        <p><strong>To use it:</strong> in claude.ai open <em>Settings → Connectors → Add custom connector</em>, name it “Selona website”, paste this whole address, and press Add. Then, in a chat, switch it on from the tools menu.</p>
-       <p>Keep this address private: anyone who has it can prepare changes (they can't publish them).</p>`
+       <p>Keep this address private, like a password: anyone who has it can change and publish the website. If it ever leaks, ask Pranamya to switch it off and make a new one.</p>`
     : `<h1>This address isn't recognised</h1>
        <p>Please check you copied the whole connector address, with nothing missing at the end. If it still doesn't work, ask Pranamya for a new one.</p>`;
   return new Response(

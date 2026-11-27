@@ -96,7 +96,7 @@ test("Claude publishes only what the person previewed, and History says it was C
   await page.goto("/editor");
   await page.getByRole("button", { name: "History" }).click();
   const top = page.locator("li", { hasText: "live now" }).first();
-  await expect(top).toContainText("Done with Claude");
+  await expect(top).toContainText("Done with Claude", { timeout: 20_000 });
   await expect(top).toContainText(process.env.E2E_EMAIL!);
 });
 
@@ -108,7 +108,8 @@ test("a change made with Claude but published in the editor is marked in History
   await page.getByRole("button", { name: "Publish", exact: true }).click();
   await expect(page.getByRole("status")).toHaveText("Live now ✓", { timeout: 60_000 });
   await page.getByRole("button", { name: "History" }).click();
-  await expect(page.locator("li", { hasText: "live now" }).first()).toContainText("Includes changes made with Claude");
+  // History is read from the store when the tab opens: allow for a slow first load on Vercel
+  await expect(page.locator("li", { hasText: "live now" }).first()).toContainText("Includes changes made with Claude", { timeout: 20_000 });
 });
 
 test("Claude can change lists and pictures, and undo changes before they go live", async ({ page, baseURL }) => {

@@ -3,12 +3,12 @@ import { cache } from "react";
 import { draftMode } from "next/headers";
 import { unstable_cache } from "next/cache";
 import { getDraft, getLive } from "./versions";
+import { contentEnv } from "./store";
 import { defaultContent, type Content } from "./paths";
 import { markForEditing } from "./stega";
 import { getEditor } from "@/lib/auth";
 
 export type { Content } from "./paths";
-const env = process.env.CONTENT_ENV || process.env.VERCEL_ENV || "development";
 
 // Live content, cached until Publish refreshes the "content" tag. If the store
 // is empty or can't be reached, the site shows the repo default instead.
@@ -23,7 +23,7 @@ const getPublished = unstable_cache(
     }
   },
   // keyed by environment so preview and production never share a cached copy
-  ["published-content", env],
+  ["published-content", contentEnv],
   // shortcut: an hourly refresh heals a cached fallback after a store outage; Publish refreshes at once
   { tags: ["content"], revalidate: 3600 },
 );

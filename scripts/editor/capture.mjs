@@ -1,6 +1,6 @@
 // Captures visible text, title, meta description and full-page screenshots of every route.
 // Usage: BASE_URL=http://localhost:3311 OUT_DIR=docs/selona-editor/baseline node scripts/editor/capture.mjs
-import { chromium } from 'playwright';
+import { chromium } from '@playwright/test';
 import { mkdirSync, writeFileSync } from 'fs';
 
 const base = process.env.BASE_URL || 'http://localhost:3311';

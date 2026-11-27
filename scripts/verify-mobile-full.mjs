@@ -1,7 +1,7 @@
 // Full mobile verification: screenshots + direct DOM measurements at
 // 375/390/414/768. Produces JSON report + PNGs in shots/verify/.
 // Every claim in the report is a measured number, not visual inference.
-import { chromium } from 'playwright';
+import { chromium } from '@playwright/test';
 import fs from 'node:fs';
 
 const base = process.env.BASE_URL || 'http://localhost:3311';

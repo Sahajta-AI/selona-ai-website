@@ -1,4 +1,4 @@
-import { chromium } from 'playwright';
+import { chromium } from '@playwright/test';
 import { mkdirSync } from 'fs';
 
 const base = process.env.BASE_URL || 'http://localhost:3311';

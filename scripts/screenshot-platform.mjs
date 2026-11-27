@@ -1,4 +1,4 @@
-import { chromium } from 'playwright';
+import { chromium } from '@playwright/test';
 
 const base = process.env.BASE_URL || 'http://localhost:3311';
 const browser = await chromium.launch();

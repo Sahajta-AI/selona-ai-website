@@ -87,12 +87,14 @@ export function checkAccessKey(email: string, key: string) {
 }
 
 // Limited attempts: failed sign-ins are recorded in the store (shared by all
-// server instances). 5 failures in 15 minutes block that email; 20 block that
-// network address. If the store can't be reached, sign-in is refused (fails closed).
+// server instances). 5 failures in 15 minutes block that email from that network
+// address; 20 block the address. An email is never blocked everywhere, so a stranger
+// who knows it can't lock its owner out (keys are 256-bit, so guessing isn't the
+// risk). If the store can't be reached, sign-in is refused (fails closed).
 const WINDOW_MS = 15 * 60_000;
 const tag = (s: string) => createHash("sha256").update(s.toLowerCase()).digest("hex").slice(0, 24);
 const folders = (email: string, ip: string) => [
-  { folder: `auth-fails/e-${tag(email)}`, max: 5 },
+  { folder: `auth-fails/e-${tag(`${email}|${ip}`)}`, max: 5 },
   { folder: `auth-fails/i-${tag(ip)}`, max: 20 },
 ];
 

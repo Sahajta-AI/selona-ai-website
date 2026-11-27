@@ -1,5 +1,5 @@
 import { editorRoute } from "@/lib/editor-api";
-import { saveDraft, type Folder } from "@/lib/content/versions";
+import { saveDraft } from "@/lib/content/versions";
 import type { Content } from "@/lib/content/paths";
 
 // Saves the shared draft. Nothing goes live until Publish.
@@ -8,4 +8,3 @@ export const POST = editorRoute(async (email, body) => {
   const saved = await saveDraft(body.content as Content, email, (body.draftId as string | null | undefined) ?? null);
   return { draftId: saved.id, savedAt: saved.at };
 });
-export type { Folder };

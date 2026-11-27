@@ -3,7 +3,7 @@ import { createHash, timingSafeEqual } from "crypto";
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { z } from "zod";
 import { isAllowed, makeLinkTicket } from "@/lib/auth";
-import { archive, Conflict, findRecord, getDraft, getLive, listRecords, saveDraft, VIA_CLAUDE } from "@/lib/content/versions";
+import { archive, Conflict, findRecord, getDraft, getLive, historyPage, isDraft, saveDraft, VIA_CLAUDE } from "@/lib/content/versions";
 import { bringBackArchive, NothingToDo, pendingChanges, publishDraft, undoLastPublish } from "@/lib/content/actions";
 import { findText, listsIn } from "@/lib/content/find";
 import { PAGES, describeKey, diffContent, flatten, getAt, isMediaKey, isTextKey, isVideoKey, setAt, type Change, type Content, type Json } from "@/lib/content/paths";
@@ -198,8 +198,6 @@ export function buildConnector(email: string, origin: string) {
     annotations: { destructiveHint: false, idempotentHint: true },
   };
   server.registerTool("change_text", changeTextSchema, changeText);
-  // the name used before 27 Nov, kept so existing chats keep working
-  server.registerTool("propose_text_changes", { ...changeTextSchema, description: `Same as change_text. ${changeTextSchema.description}` }, changeText);
 
   const changeList = async ({ list, action, index, to, fields }: { list: string; action: "add" | "remove" | "move"; index: number; to?: number; fields?: Record<string, string> }) =>
     guard(async () => {
@@ -240,7 +238,6 @@ export function buildConnector(email: string, origin: string) {
     },
   };
   server.registerTool("change_list", changeListSchema, changeList);
-  server.registerTool("propose_list_change", { ...changeListSchema, description: `Same as change_list. ${changeListSchema.description}` }, changeList);
 
   server.registerTool(
     "replace_picture",
@@ -299,7 +296,7 @@ export function buildConnector(email: string, origin: string) {
       guard(async () => {
         const { draft, changes } = await pendingChanges();
         if (!changes.length) return out("There's nothing to publish: the website already shows everything.");
-        if (draft.id !== draft_id)
+        if (!isDraft(draft, draft_id))
           return fail(
             `Nothing was published: the changes waiting to go live are different from the ones the person saw (someone edited since). Show the person this list and ask again. Current draft_id: ${draft.id}\n${JSON.stringify(changes.map(describeChange), null, 2)}`,
           );
@@ -311,23 +308,37 @@ export function buildConnector(email: string, origin: string) {
   server.registerTool(
     "show_history",
     {
-      description: "Show every version that went live (when, who, and whether it was done with Claude) and the saved whole-site versions. Use ids with restore_as_draft, undo_last_publish and bring_back_version.",
-      inputSchema: {},
+      description:
+        "Show the versions that went live (when, who, and whether it was done with Claude) and the saved whole-site versions, newest first, 20 at a time. To see older ones, call again with the cursor it gives. Use ids with restore_as_draft, undo_last_publish and bring_back_version.",
+      inputSchema: {
+        published_cursor: z.string().optional().describe("To see older published versions: the older_published cursor from the last reply"),
+        saved_cursor: z.string().optional().describe("To see older saved versions: the older_saved cursor from the last reply"),
+      },
       annotations: { readOnlyHint: true },
     },
-    async () =>
+    async ({ published_cursor, saved_cursor }) =>
       guard(async () => {
-        const [published, archives] = await Promise.all([listRecords("published", 50), listRecords("archives", 50)]);
+        const first = !published_cursor && !saved_cursor;
+        const [published, saved] = await Promise.all([
+          first || published_cursor ? historyPage("published", published_cursor) : null,
+          first || saved_cursor ? historyPage("archives", saved_cursor) : null,
+        ]);
         return out({
-          published: published.map((v, i) => ({
-            id: v.id,
-            when: v.at,
-            who: v.by.replace(VIA_CLAUDE, ""),
-            ...(v.by.endsWith(VIA_CLAUDE) ? { published_with_claude: true } : v.claude ? { included_changes_made_with_claude: true } : {}),
-            ...(i === 0 ? { live_now: true } : {}),
-            ...(v.name ? { note: v.name } : {}),
-          })),
-          saved_versions: archives.map((v) => ({ id: v.id, name: v.name, when: v.at, who: v.by })),
+          ...(published && {
+            published: published.items.map((v, i) => ({
+              id: v.id,
+              when: v.at,
+              who: v.by.replace(VIA_CLAUDE, ""),
+              ...(v.by.endsWith(VIA_CLAUDE) ? { published_with_claude: true } : v.claude ? { included_changes_made_with_claude: true } : {}),
+              ...(first && i === 0 ? { live_now: true } : {}),
+              ...(v.name ? { note: v.name } : {}),
+            })),
+            ...(published.next ? { older_published: published.next } : {}),
+          }),
+          ...(saved && {
+            saved_versions: saved.items.map((v) => ({ id: v.id, name: v.name, when: v.at, who: v.by.replace(VIA_CLAUDE, ""), ...(v.by.endsWith(VIA_CLAUDE) ? { saved_with_claude: true } : {}) })),
+            ...(saved.next ? { older_saved: saved.next } : {}),
+          }),
         });
       }),
   );
@@ -360,7 +371,6 @@ export function buildConnector(email: string, origin: string) {
     inputSchema: { id: z.string().describe("A version id from show_history") },
   };
   server.registerTool("restore_as_draft", restoreSchema, restoreAsDraft);
-  server.registerTool("prepare_restore", { ...restoreSchema, description: `Same as restore_as_draft. ${restoreSchema.description}` }, restoreAsDraft);
 
   server.registerTool(
     "save_version",

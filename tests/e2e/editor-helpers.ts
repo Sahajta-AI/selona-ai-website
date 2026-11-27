@@ -35,11 +35,24 @@ export async function editorApi(page: Page, path: string, body?: object) {
   return { status: res.status(), json: await res.json().catch(() => ({})) };
 }
 
+/** A saved version by name, looking through every page of Saved versions. */
+export async function findSaved(page: Page, name: string) {
+  let { json } = await editorApi(page, "/api/editor/versions");
+  let items = json.archives as { id: string; name: string }[];
+  let next = json.archivesNext as string | null;
+  for (;;) {
+    const found = items.find((a) => a.name === name);
+    if (found || !next) return found!;
+    ({ json } = await editorApi(page, `/api/editor/versions?folder=archives&cursor=${encodeURIComponent(next)}`));
+    items = json.items;
+    next = json.next;
+  }
+}
+
 /** Puts the original site back live (the same one-step action the editor offers). */
 export async function bringBackOriginal(page: Page) {
   const state = await editorApi(page, "/api/editor/state");
-  const { json } = await editorApi(page, "/api/editor/versions");
-  const original = json.archives.find((a: { name: string }) => a.name === ORIGINAL);
+  const original = await findSaved(page, ORIGINAL);
   const r = await editorApi(page, "/api/editor/bring-back", { id: original.id, liveId: state.json.liveId, force: true });
   expect(r.status).toBe(200);
   return r.json.liveId as string;

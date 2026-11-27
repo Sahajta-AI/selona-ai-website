@@ -86,7 +86,8 @@ export function EditorApp({ initial, startPath, startTab }: { initial: State; st
   const [selected, setSelected] = useState<string | null>(null);
   const [visibleKeys, setVisibleKeys] = useState<string[]>([]);
   const [frameNonce, setFrameNonce] = useState(0);
-  const [versions, setVersions] = useState<{ published: VersionMeta[]; archives: VersionMeta[] } | null>(null);
+  type Versions = { published: VersionMeta[]; publishedNext: string | null; archives: VersionMeta[]; archivesNext: string | null };
+  const [versions, setVersions] = useState<Versions | null>(null);
   const [archiveName, setArchiveName] = useState("");
   const [liveCheck, setLiveCheck] = useState<null | "waiting" | "live" | "slow">(null);
   // first-visit tip; remembered in this browser only (works without it too)
@@ -385,8 +386,31 @@ export function EditorApp({ initial, startPath, startTab }: { initial: State; st
 
   useEffect(() => {
     if ((tab === "history" || tab === "archive") && !versions)
-      api<{ published: VersionMeta[]; archives: VersionMeta[] }>("/api/editor/versions").then((r) => r.ok && setVersions(r.data));
+      api<Versions>("/api/editor/versions").then((r) => r.ok && setVersions(r.data));
   }, [tab, versions]);
+
+  // History and saved versions come 20 at a time; "Show older" adds the next 20
+  const [loadingOlder, setLoadingOlder] = useState(false);
+  const showOlder = useCallback(
+    async (folder: "published" | "archives") => {
+      const cursor = folder === "published" ? versions?.publishedNext : versions?.archivesNext;
+      if (!cursor) return;
+      setLoadingOlder(true);
+      const r = await api<{ items: VersionMeta[]; next: string | null }>(`/api/editor/versions?folder=${folder}&cursor=${encodeURIComponent(cursor)}`);
+      setLoadingOlder(false);
+      if (!r.ok) return setProblem(r.data.error || "That didn't work. Please try again.");
+      setVersions((v) =>
+        v && (folder === "published" ? { ...v, published: [...v.published, ...r.data.items], publishedNext: r.data.next } : { ...v, archives: [...v.archives, ...r.data.items], archivesNext: r.data.next }),
+      );
+    },
+    [versions],
+  );
+  const olderButton = (folder: "published" | "archives") =>
+    (folder === "published" ? versions?.publishedNext : versions?.archivesNext) ? (
+      <button type="button" className="btn-ed mt-2 self-start" disabled={loadingOlder} onClick={() => showOlder(folder)}>
+        {loadingOlder ? "Loading…" : "Show older"}
+      </button>
+    ) : null;
 
   // ---- pictures and videos ----------------------------------------------------
   const onFile = useCallback(
@@ -711,6 +735,7 @@ export function EditorApp({ initial, startPath, startTab }: { initial: State; st
                       </li>
                     ))}
                   </ul>
+                  {olderButton("published")}
                 </section>
               ) : null}
 
@@ -746,6 +771,7 @@ export function EditorApp({ initial, startPath, startTab }: { initial: State; st
                       </li>
                     ))}
                   </ul>
+                  {olderButton("archives")}
                 </section>
               ) : null}
             </div>

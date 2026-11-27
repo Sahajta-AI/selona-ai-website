@@ -3,21 +3,23 @@ import { createHash, timingSafeEqual } from "crypto";
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { z } from "zod";
 import { isAllowed, makeLinkTicket } from "@/lib/auth";
+import { listSetting } from "@/lib/list-setting";
 import { archive, Conflict, findRecord, getDraft, getLive, historyPage, isDraft, saveDraft, VIA_CLAUDE } from "@/lib/content/versions";
 import { bringBackArchive, NothingToDo, pendingChanges, publishDraft, undoLastPublish } from "@/lib/content/actions";
 import { findText, listsIn } from "@/lib/content/find";
 import { PAGES, describeKey, diffContent, flatten, getAt, isMediaKey, isTextKey, isVideoKey, setAt, type Change, type Content, type Json } from "@/lib/content/paths";
 import { fetchMedia, MediaProblem, saveMedia } from "@/lib/media";
 
-// The Claude connector: a private address per person. EDITOR_CONNECTOR_TOKENS is
-// "email:sha256(token),…"; removing an entry switches that address off at once.
+// The Claude connector: a private address per person. EDITOR_CONNECTOR_TOKENS (and
+// EDITOR_CONNECTOR_TOKENS_<NAME>) is "email:sha256(token),…"; removing an entry
+// switches that address off at once.
 // It can do everything the editor can. Changes are drafts first; Claude gives the
 // person a preview link and publishes only when the person asks it to (owner's
 // decision, 27 Nov). Everything it does is recorded as "<email> (via Claude)".
 export function connectorUser(token: string): string | null {
   const hash = createHash("sha256").update(token).digest("hex");
-  for (const entry of (process.env.EDITOR_CONNECTOR_TOKENS || "").split(",")) {
-    const [email, want] = entry.trim().split(":");
+  for (const entry of listSetting("EDITOR_CONNECTOR_TOKENS")) {
+    const [email, want] = entry.split(":");
     if (!email || !want || want.length !== hash.length) continue;
     if (timingSafeEqual(Buffer.from(hash), Buffer.from(want)) && isAllowed(email)) return email.toLowerCase();
   }

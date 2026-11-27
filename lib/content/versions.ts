@@ -1,6 +1,6 @@
 import "server-only";
 import { listFiles, newFileName, readJSON, writeFile, type StoredFile } from "./store";
-import { defaultContent, mergeContent, type Content, type Json } from "./paths";
+import { defaultContent, diffContent, mergeContent, type Content, type Json } from "./paths";
 
 // published/  every version that went live (a restore is a new version)
 // drafts/     every saved draft; the newest one is the current draft
@@ -13,8 +13,13 @@ export type VersionRecord = {
   kind: "publish" | "restore" | "draft" | "archive";
   name?: string; // archive name, or what a restore came from
   baseId?: string; // drafts: the live version it started from
+  // drafts: holds changes prepared with Claude; published: went live with such changes
+  claude?: boolean;
   content: Content;
 };
+/** Added to "by" for everything done through the Claude connector. */
+export const VIA_CLAUDE = " (via Claude)";
+export const isClaude = (by: string) => by.endsWith(VIA_CLAUDE);
 export const ORIGINAL_ID = "original";
 export const ORIGINAL_ARCHIVE_NAME = "Original site, before the editor (25 Nov 2026)";
 
@@ -80,7 +85,14 @@ export async function getLive() {
 export async function getDraft() {
   const [live, d] = await Promise.all([getLive(), latest("drafts")]);
   const usable = d && (!live.record || d.at > live.record.at);
-  return { id: usable ? d.id : null, content: usable ? asContent(d.content) : live.content, liveId: live.id, live: live.content };
+  return {
+    id: usable ? d.id : null,
+    content: usable ? asContent(d.content) : live.content,
+    liveId: live.id,
+    live: live.content,
+    claude: Boolean(usable && d.claude),
+    by: usable ? d.by : null,
+  };
 }
 
 export class Conflict extends Error {}
@@ -88,13 +100,22 @@ export class Conflict extends Error {}
 export async function saveDraft(content: Content, by: string, expectedDraftId?: string | null) {
   const cur = await getDraft();
   if (expectedDraftId !== undefined && cur.id !== expectedDraftId) throw new Conflict("draft");
-  return write("drafts", { kind: "draft", by, baseId: cur.liveId, content: asContent(content) });
+  const merged = asContent(content);
+  // still holds something prepared with Claude: Claude saved it, or it carries on from such a draft
+  const claude = diffContent(cur.live, merged).length > 0 && (isClaude(by) || cur.claude);
+  return write("drafts", { kind: "draft", by, baseId: cur.liveId, content: merged, ...(claude ? { claude } : {}) });
 }
 
-export async function publish(content: Content, by: string, expectedLiveId: string, opts: { force?: boolean; kind?: "publish" | "restore"; name?: string } = {}) {
+export async function publish(
+  content: Content,
+  by: string,
+  expectedLiveId: string,
+  opts: { force?: boolean; kind?: "publish" | "restore"; name?: string; claude?: boolean } = {},
+) {
   const live = await getLive();
   if (live.id !== expectedLiveId && !opts.force) throw new Conflict("live");
-  return write("published", { kind: opts.kind ?? "publish", by, name: opts.name, content: asContent(content) });
+  const claude = opts.claude || isClaude(by);
+  return write("published", { kind: opts.kind ?? "publish", by, name: opts.name, content: asContent(content), ...(claude ? { claude } : {}) });
 }
 
 export async function ensureOriginalArchive() {

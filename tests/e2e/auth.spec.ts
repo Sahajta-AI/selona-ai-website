@@ -36,6 +36,18 @@ test.describe("sign-in", () => {
     await expect(page).toHaveURL(/\/editor\/sign-in/);
   });
 
+  test("after signing in, you come back to the page and review you opened", async ({ page }) => {
+    await page.goto("/editor?review=1&path=%2Fpricing");
+    await expect(page).toHaveURL(/\/editor\/sign-in\?next=/);
+    await page.getByLabel("Email").fill(process.env.E2E_EMAIL!);
+    await page.getByLabel("Access key").fill(process.env.E2E_KEY!);
+    await page.getByRole("button", { name: "Sign in" }).click();
+    await expect(page).toHaveURL(/\/editor\?review=1&path=%2Fpricing/);
+    // already signed in: the sign-in page sends you on too
+    await page.goto("/editor/sign-in?next=%2Feditor%3Fpath%3D%252Fcontact");
+    await expect(page).toHaveURL(/\/editor\?path=%2Fcontact/);
+  });
+
   test("every editor API route refuses without sign-in", async ({ request }) => {
     for (const [method, path] of EDITOR_API_ROUTES) {
       const res = await request.fetch(path, { method, data: method === "GET" ? undefined : {}, maxRedirects: 0 });

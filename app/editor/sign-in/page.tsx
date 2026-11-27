@@ -1,16 +1,18 @@
 import { redirect } from "next/navigation";
 import { accessKeysEnabled, getEditor, googleEnabled } from "@/lib/auth";
+import { safeNext } from "@/lib/editor-redirect";
 
 const messages: Record<string, string> = {
   wrong: "That email and access key don't match. Please check them and try again.",
   locked: "Too many tries. Please wait 15 minutes and try again.",
   google: "Signing in with Google didn't work. Please try again.",
   expired: "You were signed out. Please sign in again.",
+  link: "That link from Claude has expired (they last 24 hours). Please sign in, and you'll go straight to the changes.",
 };
 
 export default async function SignIn({ searchParams }: { searchParams: Promise<{ e?: string; next?: string }> }) {
-  if (await getEditor()) redirect("/editor");
   const { e, next } = await searchParams;
+  if (await getEditor()) redirect(safeNext(next));
   const google = googleEnabled();
   const keys = accessKeysEnabled();
   return (

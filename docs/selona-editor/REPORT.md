@@ -16,7 +16,7 @@ Read first: `STATUS.md` (the brief, bullet by bullet), then `MORNING.md` (your s
 
 - **Content out of the code.** Every word, picture and both background videos on all 7 routes now come from `content/defaults.json` plus the content store. The site reads **exactly** as before: the parity test checks the text of every page against the 506e2ae baseline (21/21 locally; text 7/7 on the Preview too).
 - **Editor at /editor.** Sign in, click any text and type, change lists, replace pictures and video, Undo/Redo with Ctrl+Z, Preview, Publish with a real "Live now ✓" check, a conflict warning, History with restore, and Saved versions with a one-step bring-back. Plain words throughout; works on a phone.
-- **Claude connector at /api/mcp/<private token>.** 7 tools; it can only prepare drafts and returns a review link; publishing stays in the editor.
+- **Claude connector at /api/mcp/<private token>.** 7 tools; it can only prepare drafts and returns a review link; publishing stays in the editor. *(27 Nov: now everything the editor can do, including publishing the previewed draft when asked; see ASSUMPTIONS.md "27 Nov".)*
 - **Sign-in:** allowlist, signed 8-hour sessions, access-key backup (Preview only), Google built and ready for its keys.
 
 ## What isn't finished (BLOCKED, needs Pranamya)

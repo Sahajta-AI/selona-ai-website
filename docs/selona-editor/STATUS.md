@@ -51,7 +51,7 @@ BUILT = done and tested. PARTIAL = done but not fully proven where the brief wan
 |---|---|---|
 | Remote MCP server served by the site | BUILT | `/api/mcp/<token>`, Streamable HTTP |
 | Tools: list pages, read page, find phrase, propose text, propose list changes, history, prepare restore | BUILT | `lib/connector.ts` |
-| Drafts only; review link with old vs new, Undo per change, Publish | BUILT | proof 9 |
+| Drafts only; review link with old vs new, Undo per change, Publish | CHANGED 27 Nov | Pranamya asked for Claude to publish too: changes are drafts first, with a preview link; Claude publishes only the previewed draft when asked (`claude.spec.ts`, see ASSUMPTIONS 27 Nov) |
 | Only Rahul and Pranamya; OAuth or private URL per person | BUILT (private URL) | OAuth not testable tonight; see ASSUMPTIONS |
 | Added in claude.ai | BLOCKED | B2, needs the account owner |
 

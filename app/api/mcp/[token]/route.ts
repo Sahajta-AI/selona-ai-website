@@ -8,6 +8,10 @@ async function handle(req: Request, { params }: { params: Promise<{ token: strin
   // Someone opened the address in a web browser: explain it in plain words.
   if (req.method === "GET" && !req.headers.get("accept")?.includes("text/event-stream")) return browserPage(Boolean(email));
   if (!email) return Response.json({ error: "This connector address isn't valid." }, { status: 401 });
+  // Stateless: no standing event stream (GET) and no sessions to end (DELETE). Without
+  // this, Claude's listening stream stayed open until the 300 s function limit.
+  // The MCP spec allows 405 here; clients then carry on with POST only.
+  if (req.method !== "POST") return new Response(null, { status: 405, headers: { Allow: "POST" } });
   const transport = new WebStandardStreamableHTTPServerTransport({ sessionIdGenerator: undefined, enableJsonResponse: true });
   const server = buildConnector(email, new URL(req.url).origin);
   await server.connect(transport);

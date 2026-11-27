@@ -125,7 +125,9 @@ test("Claude can change lists and pictures, and undo changes before they go live
   // a picture replaced (file bytes); unsafe addresses refused
   const pic = await c.call("replace_picture", { key: picture.key, image_base64: PNG_1PX });
   expect(pic.error).toBe(false);
-  expect((await c.call("replace_picture", { key: picture.key, image_url: "https://localhost/x.png" })).text).toContain("can't be used");
+  // the server's own network and cloud metadata, in every spelling, are refused before anything is fetched
+  for (const address of ["https://localhost/x.png", "https://169.254.169.254/latest/meta-data", "https://10.0.0.1/x.png", "https://[::ffff:10.0.0.1]/x.png", "https://2130706433/x.png", "https://[::1]/x.png", "https://[fd00::1]/x.png"])
+    expect((await c.call("replace_picture", { key: picture.key, image_url: address })).text, address).toContain("can't be used");
   expect((await c.call("replace_picture", { key: picture.key, image_url: "http://example.com/x.png" })).text).toContain("https://");
   expect((await c.call("replace_picture", { key: picture.key, image_base64: Buffer.from("not a picture").toString("base64") })).error).toBe(true);
   // a text change, then undone on its own

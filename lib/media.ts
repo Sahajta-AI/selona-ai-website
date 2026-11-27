@@ -1,6 +1,6 @@
 import "server-only";
 import { lookup } from "dns/promises";
-import { isIP } from "net";
+import { BlockList, isIP } from "net";
 import { newFileName, writeFile } from "@/lib/content/store";
 
 // Pictures and videos for the website: checked by their first bytes, not their name.
@@ -31,16 +31,13 @@ export async function saveMedia(bytes: Buffer, wantVideo: boolean) {
   return saved.url;
 }
 
-// Addresses that must never be fetched from the server (its own network, cloud metadata).
-function isPrivateAddress(ip: string) {
-  if (ip.startsWith("::ffff:")) ip = ip.slice(7);
-  if (isIP(ip) === 4) {
-    const [a, b] = ip.split(".").map(Number);
-    return a === 0 || a === 10 || a === 127 || (a === 169 && b === 254) || (a === 172 && b >= 16 && b <= 31) || (a === 192 && b === 168) || (a === 100 && b >= 64 && b <= 127) || a >= 224;
-  }
-  const v6 = ip.toLowerCase();
-  return v6 === "::" || v6 === "::1" || v6.startsWith("fc") || v6.startsWith("fd") || v6.startsWith("fe8") || v6.startsWith("fe9") || v6.startsWith("fea") || v6.startsWith("feb") || v6.startsWith("ff");
-}
+// Addresses that must never be fetched from the server (its own network, cloud
+// metadata). BlockList also checks IPv6 forms of IPv4 addresses (::ffff:10.0.0.1).
+const PRIVATE = new BlockList();
+for (const [net, bits] of [["0.0.0.0", 8], ["10.0.0.0", 8], ["100.64.0.0", 10], ["127.0.0.0", 8], ["169.254.0.0", 16], ["172.16.0.0", 12], ["192.168.0.0", 16], ["224.0.0.0", 3]] as const)
+  PRIVATE.addSubnet(net, bits, "ipv4");
+for (const [net, bits] of [["::", 96], ["fc00::", 7], ["fe80::", 10], ["ff00::", 8]] as const) PRIVATE.addSubnet(net, bits, "ipv6");
+const isPrivateAddress = (ip: string) => PRIVATE.check(ip, isIP(ip) === 6 ? "ipv6" : "ipv4");
 
 async function checkAddress(url: URL) {
   if (url.protocol !== "https:") throw new MediaProblem("Please use a web address that starts with https://.");

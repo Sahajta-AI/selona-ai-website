@@ -45,15 +45,6 @@ export function flatten(obj: unknown, prefix = ""): [string, Json][] {
   return [[prefix.slice(0, -1), obj as Json]];
 }
 
-/** Every list (array) in the content, by key. */
-export function listKeys(obj: unknown, prefix = ""): string[] {
-  if (Array.isArray(obj))
-    return [prefix.slice(0, -1), ...obj.flatMap((v, i) => listKeys(v, `${prefix}${i}.`))];
-  if (obj && typeof obj === "object")
-    return Object.entries(obj).flatMap(([k, v]) => listKeys(v, `${prefix}${k}.`));
-  return [];
-}
-
 const SAFE_MEDIA = /^(\/[\w\-./]+|https:\/\/[a-z0-9]+\.public\.blob\.vercel-storage\.com\/[\w\-./%]+)$/i;
 const MAX_TEXT = 5000;
 

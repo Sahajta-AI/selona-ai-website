@@ -2,7 +2,6 @@ import "server-only";
 import { requireEditor } from "@/lib/auth";
 import { Conflict } from "@/lib/content/versions";
 import { NothingToDo } from "@/lib/content/actions";
-export { refreshSite } from "@/lib/content/actions";
 
 /** Wraps an editor API route: signed-in editors only, JSON in and out, plain-words errors. */
 export function editorRoute(handler: (email: string, body: Record<string, unknown>, req: Request) => Promise<Response | object>) {

@@ -15,6 +15,8 @@ export type VersionRecord = {
   baseId?: string; // drafts: the live version it started from
   // drafts: holds changes prepared with Claude; published: went live with such changes
   claude?: boolean;
+  // drafts: a copy put back on top after two saves landed at the same moment (see settleRace)
+  copyOf?: string;
   content: Content;
 };
 /** Added to "by" for everything done through the Claude connector. */
@@ -35,6 +37,17 @@ export async function latest(folder: Folder): Promise<VersionRecord | null> {
 export async function listRecords(folder: Folder, limit = 50): Promise<VersionRecord[]> {
   const { files } = await listFiles(folder, limit);
   return Promise.all(files.map((f) => readJSON<VersionRecord>(f)));
+}
+
+export type VersionMeta = { id: string; at: string; by: string; kind: VersionRecord["kind"]; name?: string; claude: boolean };
+export const HISTORY_PAGE = 20;
+
+/** One page of History, newest first: what each version is (not its content) and where the next page starts. */
+export async function historyPage(folder: "published" | "archives", cursor?: string) {
+  const { files, cursor: next } = await listFiles(folder, HISTORY_PAGE, cursor);
+  const records = await Promise.all(files.map((f) => readJSON<VersionRecord>(f)));
+  const items: VersionMeta[] = records.map(({ id, at, by, kind, name, claude }) => ({ id, at, by, kind, name, claude: Boolean(claude) }));
+  return { items, next: next ?? null };
 }
 
 export async function findRecord(folder: Folder, id: string): Promise<VersionRecord | null> {
@@ -92,18 +105,41 @@ export async function getDraft() {
     live: live.content,
     claude: Boolean(usable && d.claude),
     by: usable ? d.by : null,
+    copyOf: usable ? (d.copyOf ?? null) : null,
+    newestId: d?.id ?? null, // the newest draft file, even one older than the live version
   };
 }
+
+/** Is this the draft someone saw (by its id)? A copy put back after a race counts as the same draft. */
+export const isDraft = (d: { id: string | null; copyOf: string | null }, id: string | null | undefined) =>
+  (id ?? null) === d.id || (id != null && d.copyOf === id);
 
 export class Conflict extends Error {}
 
 export async function saveDraft(content: Content, by: string, expectedDraftId?: string | null) {
   const cur = await getDraft();
-  if (expectedDraftId !== undefined && cur.id !== expectedDraftId) throw new Conflict("draft");
+  if (expectedDraftId !== undefined && !isDraft(cur, expectedDraftId)) throw new Conflict("draft");
   const merged = asContent(content);
   // still holds something prepared with Claude: Claude saved it, or it carries on from such a draft
   const claude = diffContent(cur.live, merged).length > 0 && (isClaude(by) || cur.claude);
-  return write("drafts", { kind: "draft", by, baseId: cur.liveId, content: merged, ...(claude ? { claude } : {}) });
+  const rec = await write("drafts", { kind: "draft", by, baseId: cur.liveId, content: merged, ...(claude ? { claude } : {}) });
+  if (expectedDraftId !== undefined) await settleRace(rec.id, cur.newestId);
+  return rec;
+}
+
+// Two saves at the same moment can both pass the check in saveDraft. The one
+// written second notices (the draft just before it isn't the one it checked
+// against), puts the first one back on top as a copy, and reports a conflict:
+// its person sees "Someone else changed this draft", and nothing is lost unseen.
+// shortcut: a save the store hasn't listed yet (listing lag) can still slip past.
+async function settleRace(id: string, checkedId: string | null) {
+  const { files } = await listFiles("drafts", 10);
+  const i = files.findIndex((f) => isFileOf(f, id));
+  const before = files[i + 1];
+  if (i < 0 || !before || (checkedId !== null && isFileOf(before, checkedId))) return;
+  const first = await readJSON<VersionRecord>(before);
+  await write("drafts", { kind: "draft", by: first.by, baseId: first.baseId, content: first.content, claude: first.claude, copyOf: first.copyOf ?? first.id });
+  throw new Conflict("draft");
 }
 
 export async function publish(

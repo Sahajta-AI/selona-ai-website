@@ -31,6 +31,18 @@ test.describe("sign-in", () => {
     await expect(page.locator("main [role=alert]")).toContainText("Too many tries");
   });
 
+  test("wrong keys from one network address don't lock the owner out elsewhere", async ({ request }) => {
+    // Vercel replaces this header with the real address, so two addresses can only be simulated locally
+    test.skip(!/localhost|127\.0\.0\.1/.test(test.info().project.use.baseURL ?? ""), "needs two network addresses");
+    const at = (ip: string, key: string) =>
+      request.post("/api/editor/sign-in", { form: { email: process.env.E2E_EMAIL!, key }, headers: { "x-forwarded-for": ip }, maxRedirects: 0 });
+    const stranger = `10.${Math.floor(Math.random() * 250)}.1.1`;
+    for (let i = 0; i < 6; i++) await at(stranger, "wrong");
+    expect((await at(stranger, process.env.E2E_KEY!)).headers().location).toContain("e=locked");
+    const owner = await at(`10.${Math.floor(Math.random() * 250)}.2.2`, process.env.E2E_KEY!);
+    expect(owner.headers().location).not.toContain("sign-in");
+  });
+
   test("the editor redirects to sign-in when not signed in", async ({ page }) => {
     await page.goto("/editor");
     await expect(page).toHaveURL(/\/editor\/sign-in/);

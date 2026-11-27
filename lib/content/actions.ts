@@ -1,6 +1,6 @@
 import "server-only";
 import { revalidatePath, revalidateTag } from "next/cache";
-import { asContent, Conflict, findRecord, getDraft, getLive, listRecords, publish, saveDraft } from "./versions";
+import { asContent, Conflict, findRecord, getDraft, getLive, isDraft, listRecords, publish, saveDraft } from "./versions";
 import { diffContent } from "./paths";
 
 // The actions that change the live website, shared by the editor and the Claude
@@ -22,7 +22,7 @@ export function refreshSite() {
  */
 export async function publishDraft(by: string, opts: { draftId?: string | null; liveId: string; force?: boolean; note?: string }) {
   const draft = await getDraft();
-  if (opts.draftId !== undefined && (opts.draftId ?? null) !== draft.id) throw new Conflict("draft");
+  if (opts.draftId !== undefined && !isDraft(draft, opts.draftId)) throw new Conflict("draft");
   const rec = await publish(draft.content, by, opts.liveId, { force: opts.force, name: opts.note, claude: draft.claude });
   await saveDraft(rec.content, by); // the draft now matches what's live
   refreshSite();

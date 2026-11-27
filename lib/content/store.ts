@@ -6,8 +6,8 @@ import path from "path";
 // Every write is a new file (nothing is ever overwritten or deleted), named so
 // that the newest file of a folder sorts first: list(limit 1) = latest.
 // Preview and production keep their files apart under their own prefix.
-const env = process.env.CONTENT_ENV || process.env.VERCEL_ENV || "development";
-const prefix = `selona-content/${env}/`;
+export const contentEnv = process.env.CONTENT_ENV || process.env.VERCEL_ENV || "development";
+const prefix = `selona-content/${contentEnv}/`;
 // Blob auth: Vercel's short-lived OIDC identity + BLOB_STORE_ID (no long-lived secret), or a read-write token.
 const useBlob = Boolean(process.env.BLOB_STORE_ID || process.env.BLOB_READ_WRITE_TOKEN);
 // shortcut: local disk store for development and local tests only; Vercel always uses Blob

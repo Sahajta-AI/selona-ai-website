@@ -1,10 +1,13 @@
 import { editorRoute } from "@/lib/editor-api";
-import { ensureOriginalArchive, listRecords } from "@/lib/content/versions";
+import { ensureOriginalArchive, historyPage } from "@/lib/content/versions";
 
-// History (every published version) and the saved whole-site versions.
-export const GET = editorRoute(async () => {
+// History (every published version) and the saved whole-site versions, 20 at a time.
+// ?folder=published|archives&cursor=… loads the next 20 of one list.
+export const GET = editorRoute(async (_email, _body, req) => {
+  const q = new URL(req.url).searchParams;
+  const folder = q.get("folder");
+  if (folder === "published" || folder === "archives") return historyPage(folder, q.get("cursor") || undefined);
   await ensureOriginalArchive();
-  const [published, archives] = await Promise.all([listRecords("published", 100), listRecords("archives", 100)]);
-  const meta = ({ id, at, by, kind, name, claude }: { id: string; at: string; by: string; kind: string; name?: string; claude?: boolean }) => ({ id, at, by, kind, name, claude: Boolean(claude) });
-  return { published: published.map(meta), archives: archives.map(meta) };
+  const [published, archives] = await Promise.all([historyPage("published"), historyPage("archives")]);
+  return { published: published.items, publishedNext: published.next, archives: archives.items, archivesNext: archives.next };
 });

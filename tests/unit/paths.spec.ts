@@ -1,5 +1,5 @@
 import { test, expect } from "@playwright/test";
-import { defaultContent, diffContent, flatten, getAt, mergeContent, setAt, listKeys, type Json } from "@/lib/content/paths";
+import { defaultContent, diffContent, flatten, getAt, mergeContent, setAt, type Json } from "@/lib/content/paths";
 
 test("setAt copies and changes one value", () => {
   const next = setAt(defaultContent, "home.problems.items.1.name", "Changed");
@@ -25,9 +25,8 @@ test("diffContent reports text edits, list length changes and reorders", () => {
   expect(diffContent(defaultContent, defaultContent)).toEqual([]);
 });
 
-test("flatten and listKeys cover the whole content", () => {
+test("flatten covers the whole content", () => {
   expect(flatten(defaultContent).length).toBeGreaterThan(400);
-  expect(listKeys(defaultContent)).toContain("shared.faq.items");
 });
 
 test("findText ignores case, spacing, line breaks, curly quotes and dashes", async () => {
@@ -47,8 +46,9 @@ test("findText suggests the closest texts when words were misread", async () => 
   expect(m[0]).toMatchObject({ key: "home.hero.headline", exact: false });
 });
 
-test("listsIn finds every list on a page with its size", async () => {
+test("listsIn finds every list with its size", async () => {
   const { listsIn } = await import("@/lib/content/find");
   const lists = listsIn(defaultContent.home as unknown as Json, "home");
   expect(lists).toContainEqual({ list: "home.useCases.items", items: defaultContent.home.useCases.items.length });
+  expect(listsIn(defaultContent as unknown as Json, "").map((l) => l.list)).toContain("shared.faq.items");
 });

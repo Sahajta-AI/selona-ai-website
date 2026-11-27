@@ -89,6 +89,18 @@ export function buildConnector(email: string, origin: string) {
     }
   };
 
+  // Tool names from before 27 Nov. A chat can keep the list of tools it started
+  // with, so these must keep working. Their replies tell Claude that a new chat
+  // brings the newer tools (publish, undo and the rest).
+  const OLD_LIST =
+    "\n\n(Note for Claude: this chat is using an older list of this connector's tools. Tell the person that starting a new chat gives you more: publishing, undoing changes, pictures and saved versions.)";
+  const withOldListNote =
+    <A,>(fn: (args: A) => Promise<ReturnType<typeof out> & { isError?: boolean }>) =>
+    async (args: A) => {
+      const r = await fn(args);
+      return { ...r, content: [{ type: "text" as const, text: r.content[0].text + OLD_LIST }] };
+    };
+
   // ---- reading ----------------------------------------------------------------
   server.registerTool(
     "list_pages",
@@ -198,6 +210,7 @@ export function buildConnector(email: string, origin: string) {
     annotations: { destructiveHint: false, idempotentHint: true },
   };
   server.registerTool("change_text", changeTextSchema, changeText);
+  server.registerTool("propose_text_changes", { ...changeTextSchema, description: `Older name of change_text. ${changeTextSchema.description}` }, withOldListNote(changeText));
 
   const changeList = async ({ list, action, index, to, fields }: { list: string; action: "add" | "remove" | "move"; index: number; to?: number; fields?: Record<string, string> }) =>
     guard(async () => {
@@ -238,6 +251,7 @@ export function buildConnector(email: string, origin: string) {
     },
   };
   server.registerTool("change_list", changeListSchema, changeList);
+  server.registerTool("propose_list_change", { ...changeListSchema, description: `Older name of change_list. ${changeListSchema.description}` }, withOldListNote(changeList));
 
   server.registerTool(
     "replace_picture",
@@ -371,6 +385,7 @@ export function buildConnector(email: string, origin: string) {
     inputSchema: { id: z.string().describe("A version id from show_history") },
   };
   server.registerTool("restore_as_draft", restoreSchema, restoreAsDraft);
+  server.registerTool("prepare_restore", { ...restoreSchema, description: `Older name of restore_as_draft. ${restoreSchema.description}` }, withOldListNote(restoreAsDraft));
 
   server.registerTool(
     "save_version",

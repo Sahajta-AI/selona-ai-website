@@ -274,11 +274,12 @@ export function EditorApp({ initial, startPath, startTab }: { initial: State; st
       setLiveCheck("waiting"); // never leave an earlier "Live now ✓" on screen while this one is on its way
       setNotice("");
       setStatus("Publishing…");
-      const r = await api<{ liveId: string }>("/api/editor/publish", { method: "POST", body: JSON.stringify({ liveId: state.liveId, force }) });
+      const r = await api<{ liveId: string }>("/api/editor/publish", { method: "POST", body: JSON.stringify({ liveId: state.liveId, draftId: draftIdRef.current, force }) });
       if (!r.ok) {
         setLiveCheck(null);
         setStatus("Not published yet.");
-        if (r.status === 409) return setConflict("publish");
+        // the shared draft changed since this screen last saw it (e.g. a change prepared from Claude): show it first
+        if (r.status === 409) return setConflict(r.data.conflict === "draft" ? "draft" : "publish");
         return setProblem(r.data.error || "Publishing didn't work. Please try again.");
       }
       setStatus("Published.");

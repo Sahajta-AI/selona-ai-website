@@ -1,7 +1,7 @@
 import { test, expect } from "@playwright/test";
 import { Client } from "@modelcontextprotocol/sdk/client/index.js";
 import { StreamableHTTPClientTransport } from "@modelcontextprotocol/sdk/client/streamableHttp.js";
-import { bringBackOriginal, editText, editorApi, openEditor, publishAndWait, signIn, visitorText } from "./editor-helpers";
+import { ORIGINAL, bringBackOriginal, editText, editorApi, findSaved, openEditor, publishAndWait, signIn, visitorText } from "./editor-helpers";
 
 // Proof 9: a real MCP client connects, lists the tools, proposes a change and gets
 // a review link; publishing from that link changes the site.
@@ -16,8 +16,9 @@ test("Claude connector: propose → review link → Publish in the editor", asyn
   const { tools } = await client.listTools();
   const names = tools.map((t) => t.name).sort();
   expect(names).toEqual([
-    "bring_back_version", "change_list", "change_text", "find_text", "list_pages", "publish", "read_page",
-    "replace_picture", "restore_as_draft", "save_version", "show_changes", "show_history", "undo_changes", "undo_last_publish",
+    "bring_back_version", "change_list", "change_text", "find_text", "list_pages", "prepare_restore", "propose_list_change",
+    "propose_text_changes", "publish", "read_page", "replace_picture", "restore_as_draft", "save_version", "show_changes",
+    "show_history", "undo_changes", "undo_last_publish",
   ]);
   // every tool that changes the live website is marked as such, so Claude asks first
   for (const t of tools.filter((t) => ["publish", "undo_last_publish", "bring_back_version"].includes(t.name))) expect(t.annotations?.destructiveHint).toBe(true);
@@ -84,4 +85,26 @@ test("Claude connector: a change prepared while the editor is open isn't publish
   await page.getByRole("button", { name: /^Changes/ }).click();
   await expect(page.locator('[data-change="pricing.tiers.0.cta"]')).toContainText("Unreviewed (via Claude)", { timeout: 30_000 });
   await bringBackOriginal(page);
+});
+
+// A chat keeps the tool list it started with: the names from before 27 Nov must keep
+// working, and tell Claude that a new chat brings the newer tools.
+test("Claude connector: tool names from older chats still work", async ({ page, baseURL }) => {
+  await signIn(page);
+  await bringBackOriginal(page);
+  const client = new Client({ name: "older-chat", version: "1.0.0" });
+  await client.connect(new StreamableHTTPClientTransport(new URL(`/api/mcp/${process.env.E2E_CONNECTOR_TOKEN}`, baseURL)));
+  const text = async (name: string, args: Record<string, unknown>) => {
+    const r = await client.callTool({ name, arguments: args });
+    expect(r.isError, name).toBeFalsy();
+    return (r.content as { text: string }[])[0].text;
+  };
+  const changed = await text("propose_text_changes", { changes: [{ key: "pricing.tiers.0.cta", new_text: "Older chat change" }] });
+  expect(changed).toContain("Saved as a draft");
+  expect(changed).toContain("starting a new chat");
+  expect(await text("propose_list_change", { list: "home.useCases.items", action: "move", index: 1, to: 0 })).toContain("item 2 moved");
+  const original = await findSaved(page, ORIGINAL);
+  expect(await text("prepare_restore", { id: original.id })).toContain("is now the draft");
+  expect((await editorApi(page, "/api/editor/state")).json.draft.pricing.tiers[0].cta).toBe("Discuss a pilot");
+  await client.close();
 });
